@@ -1,0 +1,40 @@
+.create-contact {
+    display: flex;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+}
+
+.create-contact form {
+    display: flex;
+    width: 500px;
+    flex-direction: column;
+    gap: 20px;
+
+    & label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    & label input {
+        width: 300px;
+        padding: 0.5em;
+        border-radius: 5px;
+    }
+    
+    & button {
+        padding: 1rem;
+    }
+}
+
+.create-contact .close-btn {
+    position: absolute;
+    top: 0;
+    font-weight: bold;
+    right: 0;
+    padding: 0.5rem 1rem;
+}
+
+.create-contact.edit-contact input[name='contact-id'] {
+    display: none;
+}

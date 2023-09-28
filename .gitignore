@@ -1,0 +1,8 @@
+# Ide
+.*/
+.project
+.classpath
+
+# Generated
+target
+*.class

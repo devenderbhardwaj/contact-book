@@ -1,0 +1,33 @@
+.sidebar {
+    min-width: 350px;
+    padding: 1rem;
+    background-color: aliceblue;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    margin: 1rem 0;
+    padding: 0;
+
+    & li {
+        cursor: pointer;
+        background-color: hsl(0 0% 100% / 50%);
+        margin: 0.5rem 0;
+    }
+    
+    & li:hover {
+        background-color: hsl(0 50% 50% / 5%);
+    }
+    
+    & li input {
+        margin-inline: 0.5rem;
+        cursor: pointer;
+    }
+    
+    & li label {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        width: 100%;
+    }
+}

@@ -1,0 +1,48 @@
+@import url(css/createContact.css);
+@import url(css/allContacts.css);
+@import url(css/header.css);
+@import url(css/viewContact.css);
+@import url(css/deleteDialog.css);
+@import url(css/sidebar.css);
+@import url(css/all-labels-pop-up.css);
+* {
+
+	box-sizing: border-box;
+}
+:root {
+	font-size: 18px;
+}
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+#root {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+main {
+	display: flex;
+	width: 100%;
+	flex: 1;
+	gap: 20px;
+}
+.main-content-area {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    flex: 1;
+}
+
+@media screen and (max-width: 1000px) {
+	:root {
+		font-size: 17px;
+	}
+}
+
+@media screen and (max-width: 700px) {
+    :root {
+		font-size: 16px;
+    }
+}

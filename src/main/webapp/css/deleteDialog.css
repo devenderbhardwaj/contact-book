@@ -1,0 +1,31 @@
+dialog.delete {
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    font-size: 1.1em;
+
+	& .controls {
+		display : flex;
+		padding-inline : 0.5rem;
+		justify-content : space-between;
+        font-size: 1.25em;
+	}
+    & button {
+        border: none;
+        background-color: transparent;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: inherit;
+    }
+    
+    & button:hover {
+        background-color: hsl(0 0% 0% / 5%);
+    }
+    & button[value='Yes'] {
+        color: red;
+    }
+}
+
+dialog.delete::backdrop {
+	background-color: hsl(0 0% 0% / 50%);
+}

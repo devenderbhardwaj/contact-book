@@ -1,0 +1,101 @@
+.all-contacts {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+    background-color: hsl(0 0% 96%);
+    flex: 1;
+    padding: 5px;
+}
+
+.all-contacts .table-head {
+    display: flex;
+    width: 100%;
+}
+
+.all-contacts .table-body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5px;
+}
+
+.all-contacts .table-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: white;
+
+    > div {
+        flex: 1 0 20%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    & .name {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    & .contact-label {
+        font-size: 0.8em;
+        background-color: hsl(0 0% 95%);
+        padding: 2px 4px;
+        border-radius: 2px;
+        cursor: default;
+    }
+}
+.all-contacts .table-body .table-row:hover {
+    background-color: hsl(0 0% 90%);
+}
+.all-contacts .table-row.heading {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.all-contacts button {
+    text-transform: capitalize;
+}
+
+.all-contacts button.edit,
+.all-contacts button.delete {
+    font-size: 1.15em;
+    border: 1px solid black;
+    background-color: transparent;
+    border: 1px solid currentColor;
+}
+
+.all-contacts button.edit:hover {
+    color: blue;
+}
+
+.all-contacts button.delete:hover {
+    color: red;
+}
+
+.all-contacts .table-row>*:last-child {
+    display: flex;
+    justify-content: center;
+    gap: 10%;
+    flex: 0 0;
+    min-width: 180px;
+}
+
+
+@media screen and (max-width : 880px) {
+    .all-contacts .table-row>div:nth-child(4) {
+        display: none;
+    }
+}
+
+@media screen and (max-width : 580px){
+    .all-contacts .table-row > div:nth-child(3) {
+        display: none;
+    }
+}
+
+@media screen and (max-width : 480px) {
+    .all-contacts .table-row > div:last-child {
+        display: none;
+    }
+}
