@@ -20,6 +20,9 @@ body {
 	margin: 0;
 	padding: 0;
 }
+body.fixed-sidebar-show {
+	pointer-events: none;
+}
 #root {
 	display: flex;
 	flex-direction: column;

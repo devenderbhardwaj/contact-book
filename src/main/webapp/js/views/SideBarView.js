@@ -10,17 +10,24 @@ export class SideBarView {
     #createContact;
     #labelListHeader;
     #checked = new Set();
-    
+
     constructor() {
         this.#element = document.createElement("section");
         this.#element.className = "sidebar";
+
+        const padder = document.createElement("div");
+        padder.className = "padder";
+
         this.#createContactBtn = this.#getCreateContactButton();
         this.#labelList = document.createElement("ul");
         this.#labelListHeader = this.#getLabelListHeader();
 
-        this.#element.appendChild(this.#createContactBtn);
-        this.#element.appendChild(this.#labelListHeader);
-        this.#element.appendChild(this.#labelList);
+        padder.appendChild(this.#createContactBtn);
+        padder.appendChild(this.#labelList);
+        padder.appendChild(this.#labelListHeader);
+
+        this.#element.appendChild(padder);
+        this.#element.appendChild(this.#getCloseBtn());
         this.#labelList.addEventListener("input", (e) => {
             const target = e.target;
             const target_id = target.dataset["id"];
@@ -57,6 +64,7 @@ export class SideBarView {
         const element = document.createElement("div");
 
         const button = document.createElement("button");
+        button.className = "add-label";
         button.type = "button";
         button.textContent = "Add label";
         button.addEventListener("click", () => new CreateLabelDialog(this.#onCreatelabel).show());
@@ -65,13 +73,29 @@ export class SideBarView {
         return element;
     }
     #getCreateContactButton() {
-       const button = document.createElement("button");
-       button.type = "button";
-       button.textContent = "Create Contact";
-       button.addEventListener("click", () => this.#createContact());
-       return button;
+        const button = document.createElement("button");
+        button.className = "create-contact";
+        button.type = "button";
+        button.textContent = "Create Contact";
+        button.addEventListener("click", () => {
+            this.#createContact();
+            this.#close();
+        });
+        return button;
     }
 
+    #getCloseBtn() {
+        const button = Object.assign(document.createElement("button"), {
+            type: "button",
+            className: "close-btn",
+            textContent: "Close"
+        })
+        button.addEventListener("click", () => {
+            console.log(this.#element);
+            this.#close();
+        })
+        return button;
+    }
     /**
      * 
      * @param {Label} label 
@@ -83,13 +107,16 @@ export class SideBarView {
         checkbox.type = 'checkbox';
         checkbox.dataset["id"] = label.id;
         labelElement.append(checkbox);
-        labelElement.append(label.text) ;
+        labelElement.append(label.text);
         item.appendChild(labelElement);
         return item;
     }
 
     #onCreatelabel = (text) => {
         LabelService.addLabel(text);
+    }
+    #close = () => {
+        document.body.classList.remove("fixed-sidebar-show");
     }
 }
 
