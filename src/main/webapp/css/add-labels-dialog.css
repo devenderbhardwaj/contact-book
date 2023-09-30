@@ -1,0 +1,38 @@
+dialog.createLabel {
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    font-size: 1.1em;
+
+    & label {
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+    & input {
+        padding: 0.5rem;
+    }
+	& .controls {
+		display : flex;
+		justify-content : space-between;
+        font-size: 1.25em;
+	}
+    & button {
+        border: none;
+        background-color: transparent;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: inherit;
+        background-color: hsl(0 0% 0% / 4%);
+    }
+    
+    & button:hover {
+        background-color: hsl(0 0% 0% / 8%);
+    }
+    & button[value='Yes'] {
+        color: red;
+    }
+}
+
+dialog.createLabel::backdrop {
+	background-color: hsl(0 0% 0% / 50%);
+}

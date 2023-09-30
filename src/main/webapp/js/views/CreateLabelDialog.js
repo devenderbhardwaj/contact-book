@@ -8,7 +8,7 @@ export class CreateLabelDialog {
     constructor(onyes) {
         this.#onYes = onyes;
         this.element = document.createElement("dialog");
-        this.element.className = "delete createLabel";
+        this.element.className = "createLabel";
         this.element.innerHTML = (
             `
             <form method="dialog">
