@@ -59,7 +59,7 @@ export class ContactsTableView {
 
     /**
      * 
-     * @param {[Contact]} contacts 
+     * @param {Contact[]} contacts 
      */
     update(contacts) {
        contacts.forEach(contact => this.#documentFragment.append(this.#getRowElement(contact)));

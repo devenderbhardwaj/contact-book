@@ -131,7 +131,7 @@ export class ContactServiceClass {
     /**
      * 
      * @param {string} term - term to search
-     * @returns {[Contact]} - Array of all Contacts which includes the term
+     * @returns {Contact[]} - Array of all Contacts which includes the term
      */
     filterSearch(term) {
         return this.contacts.filter(item => item.includesTerm(term));
@@ -139,7 +139,7 @@ export class ContactServiceClass {
 
     /**
      * Display contacts which conform to applied contact label filters
-     * @param {[Number]} ids - array of labels-ids 
+     * @param {number[]} ids - array of labels-ids 
      */
     filterLabel(ids) {
         const set = new Set(this.contacts);
@@ -156,7 +156,7 @@ export class ContactServiceClass {
     /**
      * Edit Labels of contact
      * @param {Contact} contact - Contact to which we are making changed
-     * @param {[Number]} checked - ids of all labels which will apply to this contact
+     * @param {number[]} checked - ids of all labels which will apply to this contact
      * @param {{successCallBack:Function, failureCallback:Function}} - callbacks specify action to take after response from server side
      */
     labelsEdit(contact, checked, { successCallBack, failureCallback }) {

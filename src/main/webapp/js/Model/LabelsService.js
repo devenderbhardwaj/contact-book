@@ -1,13 +1,18 @@
 import Label from "./Label.js";
 
 class LabelServiceClass {
-    #labels = [Label];
+    /** 
+     * @private
+     * @property
+     * @type {Label[]}
+     */
+    #labels = [];
     #onChangeCallBack;
 
     constructor() {
         this.#loadLabels();
     }
-    
+
     #loadLabels() {
         const request = new XMLHttpRequest();
         request.onload = () => {
@@ -29,7 +34,7 @@ class LabelServiceClass {
         this.#onChangeCallBack?.(this.#labels);
     }
 
-    addLabel(text, {successCallback, failureCallback} = {}) {
+    addLabel(text, { successCallback, failureCallback } = {}) {
         const request = new XMLHttpRequest();
         request.open("POST", "addLabel");
         request.onload = () => {
@@ -43,8 +48,8 @@ class LabelServiceClass {
                     this.refresh()
                     successCallback?.();
                 } else {
-					failureCallback?.();
-				}
+                    failureCallback?.();
+                }
             }
             console.log(request.status);
             console.log(request.responseText);
@@ -54,7 +59,7 @@ class LabelServiceClass {
     }
 
     /**
-     * @param {[Number]} ids 
+     * @param {number[]} ids 
      * @returns 
      */
     getLabels(ids) {
@@ -76,7 +81,7 @@ class LabelServiceClass {
      * @param {number} label_id - id of label to delete
      * @param {{successCallBack:Function, errorCallBack:Function}} callBacks - callbacks specify action to take after response from server side
      */
-    deleteLabels(label_id, {successCallback, failureCallback} = {}) {
+    deleteLabels(label_id, { successCallback, failureCallback } = {}) {
         if (this.#labels.find(label => label.id == label_id)) {
             const request = new XMLHttpRequest();
             request.onload = () => {

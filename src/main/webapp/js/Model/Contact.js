@@ -1,10 +1,26 @@
 import Label from "./Label.js";
 
 export class Contact {
-    /**
-     * @property {[Label]}
-     */
+    /** @property {number} */
+    id;
+
+    /** @property {Label[]} */
     labels;
+
+    /** @property {string} */
+
+    /** @property {string} */
+    phone;
+
+    /** @property {string} */
+    email;
+
+    /** @property {string} */
+    address;
+
+    /**
+     * @param {{contact_id:number, name:string, phone:string, email : string, labels : Label[]}} arguments
+     */
     constructor({contact_id = 0,name = "",phone = "", email = "",address = "", labels = []} ) {
         this.id = contact_id;
         this.name = name;

@@ -168,7 +168,7 @@ export class ContactView {
 
     /**
      * 
-     * @param {[Number]} checked 
+     * @param {number[]} checked 
      */
     #onLabelChange = (checked) => {
         const successCallBack = this.#onReload ;

@@ -59,7 +59,7 @@ export class SideBarView {
 
     /**
     * 
-    * @param {[Label]} labels 
+    * @param {Label[]} labels 
     * @returns 
     */
     #update(labels) {
