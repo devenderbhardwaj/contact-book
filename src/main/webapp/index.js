@@ -1,10 +1,15 @@
-import { HeaderView } from "./js/views/HeaderView.js";
-import { MainView } from "./js/views/MainView.js";
+import LabelService from "./js/Model/LabelsService.js";
+import { MainContentArea } from "./js/views/MainContentArea.js";
+import { SideBarView } from "./js/views/SideBarView.js";
 
 const root = document.getElementById("root");
 
-const header = new HeaderView();
-const main = new MainView();
-root.append(header.getViewElement());
-header.bindOnSearch(main.search);
-root.append(main.getViewElement());
+
+const sidebar = new SideBarView();
+const mainContentArea = new MainContentArea();
+
+root.appendChild(sidebar.getViewElement());
+root.appendChild(mainContentArea.getViewElement());
+
+
+sidebar.bindOnContactCreate(() => alert("Create Contact"));

@@ -7,10 +7,24 @@ export class ContactsTableView {
     #tablebody;
     #documentFragment = document.createDocumentFragment();
     
-    // Action Listener
+    constructor() {
+        this.#element = document.createElement("div");
+        this.#element.className = "all-contacts-area";
+
+        this.#element.appendChild(this.#getSearchBox());
+        this.#element.appendChild(this.#getTableParentElement());
+        this.#tablebody = this.#element.querySelector(".table-body");
+    
+        ContactService.bindOnContactsLoad((contacts) => this.update(contacts));
+        this.update(ContactService.contacts);
+    }
+
+    // Action Listener - provided by outside
     #onEdit ;
     #onView;
-    
+
+    // Action Listener - binders
+
     /**
      * 
      * @param {Function} callBack 
@@ -26,6 +40,9 @@ export class ContactsTableView {
     bindOnEdit(callBack) {
         this.#onEdit = callBack;
     }
+    
+
+    // Action Listener - defined internally
 
     /**
      * @param {Contact} contact
@@ -40,11 +57,6 @@ export class ContactsTableView {
         deleteDialog.show();      
     };
 
-    constructor() {
-        this.#element = this.#getTableParentElement();
-        this.#tablebody = this.#element.querySelector(".table-body");
-    }
-
     /**
      * 
      * @param {[Contact]} contacts 
@@ -58,6 +70,7 @@ export class ContactsTableView {
     getViewElement() {
         return this.#element;
     }
+
     #getTableParentElement() {
         const element = document.createElement("div");
         element.className = "all-contacts";
@@ -112,5 +125,23 @@ export class ContactsTableView {
             this.#onDelete(contact);
         });
         return rowElement;
+    }
+
+    #getSearchBox() {
+        const searchField = document.createElement("input");
+        Object.assign(searchField, {
+            type: "search",
+            name: 'filter-search',
+            className: "filter",
+            placeholder: "Search",
+            oninput: () => {
+                this.update(ContactService.filterSearch(searchField.value));
+            }
+        })
+        
+        const element = document.createElement("div");
+        element.className = "search-box";
+        element.appendChild(searchField);
+        return element;
     }
 }

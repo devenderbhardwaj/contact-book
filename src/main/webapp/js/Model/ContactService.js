@@ -2,7 +2,11 @@ import { Contact } from "./Contact.js";
 import LabelService from "./LabelsService.js";
 
 export class ContactServiceClass {
-    contacts = [Contact];
+    /**
+     * @property
+     * @type {Contact[]}
+     */
+    contacts = [];
     #onContactsLoad;
 
     constructor() {

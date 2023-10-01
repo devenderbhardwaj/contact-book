@@ -1,5 +1,5 @@
 @import url(css/createContact.css);
-@import url(css/allContacts.css);
+@import url(css/ContactTableView.css);
 @import url(css/header.css);
 @import url(css/viewContact.css);
 @import url(css/deleteDialog.css);
@@ -25,19 +25,14 @@ body.fixed-sidebar-show {
 }
 #root {
 	display: flex;
-	flex-direction: column;
 	flex: 1;
 }
-main {
-	display: flex;
-	width: 100%;
-	flex: 1;
-	gap: 20px;
-}
+
 .main-content-area {
     display: flex;
     flex-direction: column;
     flex: 1;
+	padding: 1vw;
 }
 
 @media screen and (max-width: 1000px) {

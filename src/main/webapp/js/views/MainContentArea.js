@@ -8,16 +8,12 @@ import { DeleteDialog } from "./deleteDialog.js";
 export class MainContentArea {
     #element;
     #contactsTableView;
-    #service;
 
     constructor() {
         this.#element = document.createElement("section");
         this.#element.className = "main-content-area";
         this.#contactsTableView = new ContactsTableView();
         this.#element.appendChild(this.#contactsTableView.getViewElement());
-        this.#service = ContactService;
-        this.#service.bindOnContactsLoad(this.#onContactsLoad);
-        this.#contactsTableView.update(this.#service.contacts);
 
         this.#contactsTableView.bindOnEdit(this.#onContactEditModeEnable);
         this.#contactsTableView.bindOnView(this.#onContactView);
@@ -32,7 +28,7 @@ export class MainContentArea {
         const form = getCreateContactForm(() => {
             this.#element.innerHTML = "";
             this.#element.append(this.#contactsTableView.getViewElement());
-        }, this.#service);
+        }, ContactService);
         this.#element.append(form);
     }
 
@@ -64,7 +60,7 @@ export class MainContentArea {
     }
 
     search = (term) => {
-        this.#contactsTableView.update(this.#service.filterSearch(term));
+        this.#contactsTableView.update(ContactService.filterSearch(term));
     }
 
     /**
@@ -93,7 +89,7 @@ export class MainContentArea {
         const onEditSave = (formdata) => {
             const successCallBack = this.#onContactView;
             const errorCallBack = () => alert("Failed");
-            this.#service.editContact(formdata, {successCallBack, errorCallBack})
+            ContactService.editContact(formdata, {successCallBack, errorCallBack})
         }
         const onDelete = () => {
             const successCallBack = onGoBack;

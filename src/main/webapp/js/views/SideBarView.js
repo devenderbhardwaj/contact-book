@@ -5,12 +5,10 @@ import { CreateLabelDialog } from "./CreateLabelDialog.js";
 
 export class SideBarView {
     #element;
-    #createContactBtn;
-    #labelList;
-    #createContact;
-    #labelListHeader;
-    #checked = new Set();
-
+        
+    //Logical Data
+    #checked = new Set(); // Contains Ids of all checked labels
+    
     constructor() {
         this.#element = document.createElement("section");
         this.#element.className = "sidebar";
@@ -18,17 +16,17 @@ export class SideBarView {
         const padder = document.createElement("div");
         padder.className = "padder";
 
-        this.#createContactBtn = this.#getCreateContactButton();
-        this.#labelList = document.createElement("ul");
-        this.#labelListHeader = this.#getLabelListHeader();
+        const createContactBtn = this.#getCreateContactButton();
+        const labelList = document.createElement("ul");
+        const labelListHeader = this.#getLabelListHeader();
 
-        padder.appendChild(this.#createContactBtn);
-        padder.appendChild(this.#labelList);
-        padder.appendChild(this.#labelListHeader);
+        padder.appendChild(createContactBtn);
+        padder.appendChild(labelList);
+        padder.appendChild(labelListHeader);
 
         this.#element.appendChild(padder);
         this.#element.appendChild(this.#getCloseBtn());
-        this.#labelList.addEventListener("input", (e) => {
+        labelList.addEventListener("input", (e) => {
             const target = e.target;
             const target_id = target.dataset["id"];
             if (target.checked) {
@@ -38,8 +36,23 @@ export class SideBarView {
             }
             ContactService.filterLabel(this.#checked);
         })
-    }
 
+        LabelService.bindOnLoad((labels) => this.#update(labels));
+        LabelService.refresh();
+    }
+    //Event Handlers : Provided by outside
+    #onCreateContact;
+    
+    //Event Handlers binders
+    bindOnContactCreate(callBack) {
+        this.#onCreateContact = callBack;
+    }
+    
+    //Event Handlers : handles it self
+    #onCreatelabel = (text) => {
+        LabelService.addLabel(text);
+    }
+    
     getViewElement() {
         return this.#element;
     }
@@ -49,16 +62,15 @@ export class SideBarView {
     * @param {[Label]} labels 
     * @returns 
     */
-    update(labels) {
+    #update(labels) {
         const fragement = document.createDocumentFragment();
-        labels.forEach(label => fragement.append(this.#getListItem(label)));
-        this.#labelList.innerHTML = "";
-        this.#labelList.appendChild(fragement);
+        labels.forEach(label => fragement.appendChild(this.#getListItem(label)));
+
+        const labelList = this.#element.querySelector("ul");
+        labelList.innerHTML = "";
+        labelList.appendChild(fragement);
     }
 
-    bindOnContactCreate(callBack) {
-        this.#createContact = callBack;
-    }
 
     #getLabelListHeader() {
         const element = document.createElement("div");
@@ -68,8 +80,7 @@ export class SideBarView {
         button.type = "button";
         button.textContent = "Add label";
         button.addEventListener("click", () => new CreateLabelDialog(this.#onCreatelabel).show());
-
-        element.append(button);
+        element.appendChild(button);
         return element;
     }
     #getCreateContactButton() {
@@ -78,7 +89,7 @@ export class SideBarView {
         button.type = "button";
         button.textContent = "Create Contact";
         button.addEventListener("click", () => {
-            this.#createContact();
+            this.#onCreateContact();
             this.#close();
         });
         return button;
@@ -88,12 +99,12 @@ export class SideBarView {
         const button = Object.assign(document.createElement("button"), {
             type: "button",
             className: "close-btn",
-            textContent: "Close"
+            textContent: "Close",
+            onclick: () => {
+                this.#close();
+            }
         })
-        button.addEventListener("click", () => {
-            console.log(this.#element);
-            this.#close();
-        })
+
         return button;
     }
     /**
@@ -118,9 +129,6 @@ export class SideBarView {
         return item;
     }
 
-    #onCreatelabel = (text) => {
-        LabelService.addLabel(text);
-    }
     #close = () => {
         document.body.classList.remove("fixed-sidebar-show");
     }
