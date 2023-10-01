@@ -6,3 +6,6 @@
 # Generated
 target
 *.class
+
+# Others
+Main.java
