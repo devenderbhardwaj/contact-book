@@ -30,6 +30,13 @@ export class ContactServiceClass {
         }
     }
 
+    refreshLabels() {
+        this.contacts.forEach(
+            contact =>
+                contact.labels = LabelService.getLabels(contact.labels.map(label => label.id))
+        );
+        this.#refresh();
+    }
     /**
      * Display contacts which are passed as array of Contacts if argument is not passed display all contacts
      * @param {[Contact]} arr - array of Contact to display
@@ -101,7 +108,7 @@ export class ContactServiceClass {
         request.open("POST", "delete");
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.onload = () => {
-            if (request.status == 200 ) {
+            if (request.status == 200) {
                 const response = JSON.parse(request.responseText);
                 if (response.deleted) {
                     this.contacts = this.contacts.filter(contact => contact.id != id);
@@ -148,7 +155,7 @@ export class ContactServiceClass {
      * @param {[Number]} checked - ids of all labels which will apply to this contact
      * @param {{successCallBack:Function, failureCallback:Function}} - callbacks specify action to take after response from server side
      */
-    labelsEdit(contact, checked, {successCallBack, failureCallback}) {
+    labelsEdit(contact, checked, { successCallBack, failureCallback }) {
         const request = new XMLHttpRequest();
         request.onload = () => {
             if (request.status == 200) {

@@ -76,4 +76,15 @@ public class LabelDao {
         return list;
     }
 
+    public boolean deleteLabel(long label_id) {
+        String query = "DELETE FROM labels WHERE label_id = ?";
+        int rowsEffect = 0;
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setLong(1, label_id);
+            rowsEffect = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rowsEffect > 0;
+    }
 }

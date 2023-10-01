@@ -70,6 +70,37 @@ class LabelServiceClass {
         }
         return this.#labels.filter(isIt);
     }
+
+    /**
+     * Add new contact
+     * @param {number} label_id - id of label to delete
+     * @param {{successCallBack:Function, errorCallBack:Function}} callBacks - callbacks specify action to take after response from server side
+     */
+    deleteLabels(label_id, {successCallback, failureCallback} = {}) {
+        if (this.#labels.find(label => label.id == label_id)) {
+            const request = new XMLHttpRequest();
+            request.onload = () => {
+                console.log(request.response);
+                const response = JSON.parse(request.response);
+                console.log(response);
+                if (response.success) {
+                    this.#labels = this.#labels.filter(label => label.id != label_id);
+                    console.log(this.#labels);
+                    this.refresh();
+                    successCallback?.(this.#labels);
+                } else {
+                    failureCallback?.();
+                }
+            }
+            request.open("POST", 'deleteLabel');
+            request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+            const params = new URLSearchParams();
+            params.append("label_id", label_id);
+            request.send(params);
+        } else {
+            failureCallback?.();
+        }
+    }
 }
 
 const LabelService = new LabelServiceClass();

@@ -109,6 +109,12 @@ export class SideBarView {
         labelElement.append(checkbox);
         labelElement.append(label.text);
         item.appendChild(labelElement);
+
+        item.addEventListener("dblclick", () => {
+            const successCallback = () => { ContactService.refreshLabels() };
+            const failureCallback = () => alert("Delete Operation Failed");
+            LabelService.deleteLabels(label.id, {successCallback, failureCallback});
+        })
         return item;
     }
 

@@ -42,7 +42,10 @@
   	<servlet-name>getLabels</servlet-name>
   	<servlet-class>servlets.GetLabels</servlet-class>
   </servlet>
-
+	<servlet>
+	<servlet-name>deleteLabel</servlet-name>
+	<servlet-class>servlets.DeleteLabel</servlet-class>
+	</servlet>
 
 
   <servlet-mapping>
@@ -84,5 +87,9 @@
   <servlet-mapping>
   	<servlet-name>getLabels</servlet-name>
   	<url-pattern>/getLabels</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>deleteLabel</servlet-name>
+  	<url-pattern>/deleteLabel</url-pattern>
   </servlet-mapping>
 </web-app>

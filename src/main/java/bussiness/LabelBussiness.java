@@ -55,4 +55,8 @@ public class LabelBussiness {
         sb.append("]");
         return sb.toString();
     }
+
+    public boolean deleteLabel(long label_id) {
+        return labelDao.deleteLabel(label_id);
+    }
 }
