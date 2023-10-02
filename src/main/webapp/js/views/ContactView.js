@@ -5,9 +5,9 @@ import getAllLabelsPopUp from "./AllLabelsPopUp.js";
 export class ContactView {
     #contact;
     #element;
+    #editMode;
 
     // Action Listener
-    #onEditModeChange;
     #onDelete;
     #onEditSave;
 	#onBack;
@@ -20,15 +20,9 @@ export class ContactView {
     constructor(contact, editMode = false) {
         this.#contact = contact;
         this.#element = this.#getViewContact(editMode);
+        this.#editMode = editMode;
     }
 
-    /**
-     * 
-     * @param {Function} callBack 
-     */
-    bindOnEditModeChange(callBack) {
-        this.#onEditModeChange = callBack;
-    }
     bindDelete(callBack) {
         this.#onDelete = callBack;
     }
@@ -123,12 +117,12 @@ export class ContactView {
         );
         const editBtn = element.querySelector(".controls .edit-btn");
         editBtn?.addEventListener("click", () => {
-            this.#onEditModeChange(true);
+            this.#onReload(true);
         });
     
         const cancelBtn = element.querySelector(".controls .cancel-btn");
         cancelBtn?.addEventListener("click", () => {
-            this.#onEditModeChange(false);
+            this.#onReload(false);
         })
     
         const deleteBtn = element.querySelector(".controls .delete-btn");
@@ -167,7 +161,7 @@ export class ContactView {
      * @param {number[]} checked 
      */
     #onLabelChange = (checked) => {
-        const successCallBack = this.#onReload ;
+        const successCallBack = () => this.#onReload(this.#editMode) ;
         ContactService.labelsEdit(this.#contact, checked, {successCallBack});
     }
 }

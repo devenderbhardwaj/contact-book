@@ -49,7 +49,7 @@ export class MainContentArea {
      */
     #getContactView = (contact, editMode = false) => {
         const contactView = new ContactView(contact, editMode);
-        const onEditModeChange = (editMode = false) => {
+        const reload = (editMode = false) => {
             this.#element.innerHTML = "";
             const contactView = this.#getContactView(contact, editMode);
             this.#element.appendChild(contactView.getViewElement());
@@ -75,10 +75,9 @@ export class MainContentArea {
         }
         
         contactView.bindDelete(onDelete);
-        contactView.bindOnEditModeChange(onEditModeChange);
         contactView.bindEditSave(onEditSave);
         contactView.bindGoBack(onGoBack);
-        contactView.bindOnReload(this.#onContactView);
+        contactView.bindOnReload(reload);
         return contactView;
     }
 }

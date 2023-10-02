@@ -10,3 +10,5 @@ target
 # Others
 Main.java
 node_modules
+
+**/*.json
