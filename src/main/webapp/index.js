@@ -1,4 +1,3 @@
-import LabelService from "./js/Model/LabelsService.js";
 import { MainContentArea } from "./js/views/MainContentArea.js";
 import { SideBarView } from "./js/views/SideBarView.js";
 
@@ -12,4 +11,4 @@ root.appendChild(sidebar.getViewElement());
 root.appendChild(mainContentArea.getViewElement());
 
 
-sidebar.bindOnContactCreate(() => alert("Create Contact"));
+sidebar.bindOnContactCreate(() => mainContentArea.createContact());

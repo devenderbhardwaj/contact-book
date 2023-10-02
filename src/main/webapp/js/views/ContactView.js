@@ -7,10 +7,9 @@ export class ContactView {
     #element;
 
     // Action Listener
-    #onEditEnable;
+    #onEditModeChange;
     #onDelete;
     #onEditSave;
-    #onEditCancel;
 	#onBack;
 	#onReload;
 
@@ -27,17 +26,14 @@ export class ContactView {
      * 
      * @param {Function} callBack 
      */
-    bindEditEnable(callBack) {
-        this.#onEditEnable = callBack;
+    bindOnEditModeChange(callBack) {
+        this.#onEditModeChange = callBack;
     }
     bindDelete(callBack) {
         this.#onDelete = callBack;
     }
     bindEditSave(callBack) {
         this.#onEditSave = callBack;
-    }
-    bindEditCancel(callBack) {
-        this.#onEditCancel = callBack;
     }
     bindGoBack(callBack) {
 		this.#onBack = callBack;
@@ -127,12 +123,12 @@ export class ContactView {
         );
         const editBtn = element.querySelector(".controls .edit-btn");
         editBtn?.addEventListener("click", () => {
-            this.#onEditEnable();
+            this.#onEditModeChange(true);
         });
     
         const cancelBtn = element.querySelector(".controls .cancel-btn");
         cancelBtn?.addEventListener("click", () => {
-            this.#onEditCancel();
+            this.#onEditModeChange(false);
         })
     
         const deleteBtn = element.querySelector(".controls .delete-btn");

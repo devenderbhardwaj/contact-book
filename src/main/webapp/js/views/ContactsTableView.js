@@ -15,7 +15,7 @@ export class ContactsTableView {
         this.#element.appendChild(this.#getTableParentElement());
         this.#tablebody = this.#element.querySelector(".table-body");
     
-        ContactService.bindOnContactsLoad((contacts) => this.update(contacts));
+        ContactService.bindOnContactsLoad(contacts => this.update(contacts));
         this.update(ContactService.contacts);
     }
 
@@ -75,7 +75,7 @@ export class ContactsTableView {
         const element = document.createElement("div");
         element.className = "all-contacts";
         element.innerHTML = (
-            `
+        `
         <div class="table-head">
             <div class="table-row heading">
                 <div>Name</div>
@@ -114,16 +114,10 @@ export class ContactsTableView {
                 </div>
             `
         );
-        rowElement.querySelector(".name").addEventListener("click", () => {
-            this.#onView(contact);
-        })
-        rowElement.querySelector("button.edit").addEventListener("click", () => {
-            this.#onEdit(contact);
-        })
-
-        rowElement.querySelector("button.delete").addEventListener("click", () => {
-            this.#onDelete(contact);
-        });
+        rowElement.querySelector(".name").addEventListener("click", () => this.#onView(contact, false));
+        rowElement.querySelector("button.edit").addEventListener("click", () => this.#onView(contact, true));
+        rowElement.querySelector("button.delete").addEventListener("click", () => this.#onDelete(contact));
+        
         return rowElement;
     }
 
@@ -134,9 +128,7 @@ export class ContactsTableView {
             name: 'filter-search',
             className: "filter",
             placeholder: "Search",
-            oninput: () => {
-                this.update(ContactService.filterSearch(searchField.value));
-            }
+            oninput: () => this.update(ContactService.filterSearch(searchField.value))
         })
         
         const element = document.createElement("div");
