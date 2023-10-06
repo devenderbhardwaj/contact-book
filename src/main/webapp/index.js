@@ -3,12 +3,7 @@ import { SideBarView } from "./js/views/SideBarView.js";
 
 const root = document.getElementById("root");
 
+root.appendChild(SideBarView.getViewElement());
+root.appendChild(MainContentArea.getViewElement());
 
-const sidebar = new SideBarView();
-const mainContentArea = new MainContentArea();
-
-root.appendChild(sidebar.getViewElement());
-root.appendChild(mainContentArea.getViewElement());
-
-
-sidebar.bindOnContactCreate(() => mainContentArea.createContact());
+SideBarView.bindOnContactCreate(() => MainContentArea.createContact());

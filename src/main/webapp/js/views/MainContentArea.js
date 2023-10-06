@@ -5,7 +5,7 @@ import { ContactsTableView } from "./ContactsTableView.js";
 import { getCreateContactForm } from "./CreateContactForm.js";
 import { DeleteDialog } from "./deleteDialog.js";
 
-export class MainContentArea {
+class MainContentAreaClass {
     #element;
     #contactsTableView;
 
@@ -81,3 +81,5 @@ export class MainContentArea {
         return contactView;
     }
 }
+
+export const MainContentArea = new MainContentAreaClass();

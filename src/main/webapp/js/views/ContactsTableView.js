@@ -131,8 +131,17 @@ export class ContactsTableView {
             oninput: () => this.update(ContactService.filterSearch(searchField.value))
         })
         
+        const menuBtn = document.createElement("button");
+        menuBtn.type = "button";
+        menuBtn.className = "menu-btn";
+        menuBtn.textContent = "Menu";
+        menuBtn.addEventListener("click", () => {
+            document.body.classList.add("fixed-sidebar-show");
+        })
+
         const element = document.createElement("div");
         element.className = "search-box";
+        element.appendChild(menuBtn);
         element.appendChild(searchField);
         return element;
     }

@@ -3,7 +3,7 @@ import Label from "../Model/Label.js";
 import LabelService from "../Model/LabelsService.js";
 import { CreateLabelDialog } from "./CreateLabelDialog.js";
 
-export class SideBarView {
+class SideBar {
     #element;
         
     //Logical Data
@@ -133,6 +133,8 @@ export class SideBarView {
         document.body.classList.remove("fixed-sidebar-show");
     }
 }
+
+export const SideBarView = new SideBar();
 
 
 

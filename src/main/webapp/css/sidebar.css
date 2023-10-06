@@ -85,8 +85,9 @@
         display: block;
         position: fixed;
         top: 0;
+        bottom: 0;
         border: 0;
-        padding-top: 8%;
+        padding-top: 8vh;
         pointer-events: all;
         z-index: 2;
 

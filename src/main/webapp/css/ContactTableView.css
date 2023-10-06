@@ -6,13 +6,17 @@
 
     & .search-box {
         display: flex;
-        justify-content: center;
         padding: 0.5rem;
 
         & input {
             padding: 0.5rem;
             font-size: 1.15rem;
             width: clamp(280px, 55%, 400px);
+            margin-inline: auto;
+        }
+
+        .menu-btn {
+            display: none;
         }
     }
 
@@ -112,6 +116,12 @@
 @media screen and (max-width : 950px){
     .all-contacts .table-row > div:nth-child(3) {
         display: none;
+    }
+}
+
+@media screen and (max-width : 700px) {
+    .all-contacts-area .search-box .menu-btn {
+        display: inline-block;
     }
 }
 
