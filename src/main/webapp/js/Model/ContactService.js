@@ -67,9 +67,13 @@ export class ContactServiceClass {
         req.onload = () => {
             if (req.status === 200) {
                 const response = JSON.parse(req.responseText);
-                const contact = new Contact(response);
-                this.contacts.push(contact);
-                successCallBack(contact);
+                if (response.success) {
+                    const contact = new Contact(response.data);
+                    this.contacts.push(contact);
+                    successCallBack(contact);
+                } else {
+                    errorCallBack?.();
+                }
             } else {
                 errorCallBack();
             }

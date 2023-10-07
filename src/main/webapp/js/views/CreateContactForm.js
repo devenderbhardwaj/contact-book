@@ -12,7 +12,7 @@ export function getCreateContactForm(backAction, ContactService) {
     element.innerHTML =
         `<form action="saveContact" method="post">
             <label>Name:
-                <input type="text" name="name">
+                <input type="text" name="name" required>
             </label>
             <label>Phone:
                 <input type="tel" name="phone">
