@@ -20,7 +20,7 @@ public class Login extends HttpServlet {
 
         String toJson() {
             StringBuilder sb = new StringBuilder("{");
-            sb.append("\"auth\":").append(success).append(", ");
+            sb.append("\"success\":").append(success).append(", ");
             sb.append("\"accountDoesNotExist\":").append(accountDoesNotExist).append(", ");
             sb.append("\"wrongPassword\":").append(wrongPassword).append(", ");
             sb.append("\"redirectUrl\":\"").append(redirectUrl).append("\"");

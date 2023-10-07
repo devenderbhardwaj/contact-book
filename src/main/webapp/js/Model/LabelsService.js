@@ -19,8 +19,10 @@ class LabelServiceClass {
             if (request.status == 200) {
                 const response = JSON.parse(request.responseText);
                 console.log(response);
-                this.#labels = response.map(label => new Label(label));
-                this.refresh();
+                if (response.success) {
+                    this.#labels = response.data.map(label => new Label(label));
+                    this.refresh();
+                }
             }
         }
         request.open("GET", "getLabels");

@@ -22,15 +22,20 @@ export class ContactServiceClass {
     }
 
     #loadContacts() {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "getContacts");
-        xhr.send();
-        xhr.onload = () => {
-            const x = xhr.response;
-            const response = JSON.parse(x);
-            this.contacts = response.map(item => new Contact(item));
-            console.log(this.contacts);
-            this.#refresh();
+        const request = new XMLHttpRequest();
+        request.open("POST", "getContacts");
+        request.send();
+        request.onload = () => {
+            if (request.status == 200) {
+                const response = JSON.parse(request.responseText);
+                if (response.success) {
+                    this.contacts = response.data.map(item => new Contact(item));
+                    console.log(this.contacts);
+                    this.#refresh();
+                }
+            } else {
+                alert("Contact couldn't be fetched");
+            }
         }
     }
 

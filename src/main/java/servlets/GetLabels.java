@@ -11,26 +11,50 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class GetLabels extends HttpServlet{
-    
+    private class ResponseData {
+        Boolean success;
+        Boolean auth;
+        String data;
+
+        String toJson() {
+            StringBuilder sb = new StringBuilder("{");
+            sb.append("\"success\":").append(success).append(",");
+            sb.append("\"auth\":").append(auth).append(",");
+            sb.append("\"data\":").append(data);
+            
+            return sb.append("}").toString();
+        }
+
+        public String toString() {
+            return toJson();
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = (User) req.getSession().getAttribute("user");
-        if (user == null) {
-            resp.setStatus(401);
-            return ;
-        }
-        String resposne = "";
-        try {
-            LabelBussiness lbBussiness = new LabelBussiness();
-            resposne = lbBussiness.getLabels(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        ResponseData rd = new ResponseData();
+        process(rd, req, resp);
         try (PrintWriter out = resp.getWriter()) {
-            out.println(resposne);
+            out.println(rd);
         }
     }
     
+    private void process(ResponseData rd , HttpServletRequest req, HttpServletResponse resp) {
+        User user = (User) req.getSession().getAttribute("user");
+        if (user == null) {
+            rd.auth = false;
+            resp.setStatus(401);
+            return ;
+        }
+        rd.auth = true;
+        try {
+            LabelBussiness lbBussiness = new LabelBussiness();
+            rd.data = lbBussiness.getLabels(user);
+            rd.success = true;
+        } catch (Exception e) {
+            rd.success = false;
+            e.printStackTrace();
+        }
+
+    }
 }
