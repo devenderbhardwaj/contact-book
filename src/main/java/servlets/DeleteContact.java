@@ -10,34 +10,70 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class DeleteContact extends HttpServlet{
+public class DeleteContact extends HttpServlet {
+    private class ResponseData {
+        Boolean authenticate;
+        Boolean autherize;
+        Boolean valid;
+        Boolean success;
+
+        String toJson() {
+            StringBuilder sb = new StringBuilder("{");
+            sb.append("\"authenticate\":").append(authenticate).append(",");
+            sb.append("\"autherize\":").append(autherize).append(",");
+            sb.append("\"valid\":").append(valid).append(",");
+            sb.append(("\"success\":")).append(success);
+            sb.append("}");
+            return sb.toString();
+        }
+
+        @Override
+        public String toString() {
+            return toJson();
+        }
+    }
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -5774239806694409089L;
+     * 
+     */
+    private static final long serialVersionUID = -5774239806694409089L;
 
-	@Override
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setContentType("text/json");
-        boolean result = false;
+        ResponseData rd = new ResponseData();
+        process(rd, req, resp);
 
-        User user = (User) req.getSession().getAttribute("user");
-        Long id = Long.parseLong(req.getParameter("contact_id"));
-        if (user != null) {
-            try {
-                ContactBussiness contactBussiness = new ContactBussiness();
-                result = contactBussiness.deleteContact(user, id);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-		
+        resp.setContentType("text/json");
         try (PrintWriter out = resp.getWriter()) {
-            out.println("{ \"deleted\": " + result + "}");
+            out.println(rd.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        User user = (User) req.getSession().getAttribute("user");
+        if (user == null) {
+            rd.authenticate = false;
+            return;
+        }
+        rd.authenticate = true;
+
+        Long id;
+        try {
+            id = Long.parseLong(req.getParameter("contact_id"));
+            rd.valid = true;
+        } catch (NumberFormatException e) {
+            rd.valid = false;
+            return ;
+        }
+        
+        try {
+            ContactBussiness contactBussiness = new ContactBussiness();
+            rd.success = contactBussiness.deleteContact(user, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

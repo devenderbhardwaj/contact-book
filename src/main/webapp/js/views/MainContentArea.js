@@ -65,7 +65,8 @@ class MainContentAreaClass {
         }
         const onDelete = () => {
             const successCallBack = onGoBack;
-            const onYes = () => ContactService.deleteContact(contact.id, {successCallBack});
+            const failureCallback = () => alert("Delete operation failed");
+            const onYes = () => ContactService.deleteContact(contact.id, {successCallBack, failureCallback});
             const deleteDialog = new DeleteDialog(onYes);
             deleteDialog.show();
         }

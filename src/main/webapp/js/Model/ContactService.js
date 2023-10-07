@@ -105,31 +105,31 @@ export class ContactServiceClass {
     /**
      * 
      * @param {Number} id - id of contact to delete
-     * @param {{successCallBack:Function, errorCallBack:Function}} callBacks - callbacks specify action to take after response from server side
+     * @param {{successCallBack:Function, failureCallback:Function}} callBacks - callbacks specify action to take after response from server side
      */
-    deleteContact(id, { successCallBack, errorCallBack }) {
+    deleteContact(id, { successCallBack, failureCallback }) {
         const request = new XMLHttpRequest();
         request.open("POST", "delete");
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.onload = () => {
             if (request.status == 200) {
                 const response = JSON.parse(request.responseText);
-                if (response.deleted) {
+                if (response.success) {
                     this.contacts = this.contacts.filter(contact => contact.id != id);
                     this.#refresh();
                     successCallBack?.();
                 } else {
-                    errorCallBack?.();
+                    failureCallback?.();
                 }
             } else {
-                errorCallBack?.()
+                failureCallback?.()
             }
         }
         request.send(`contact_id=${encodeURIComponent(id)}`);
     }
 
     /**
-     * 
+     * For filter contacts based on text
      * @param {string} term - term to search
      * @returns {Contact[]} - Array of all Contacts which includes the term
      */
