@@ -13,14 +13,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class Login extends HttpServlet {
     private class Response {
-        Boolean auth = false;
+        Boolean success = false;
         Boolean accountDoesNotExist = null;
         Boolean wrongPassword = null;
         String redirectUrl = "";
 
         String toJson() {
             StringBuilder sb = new StringBuilder("{");
-            sb.append("\"auth\":").append(auth).append(", ");
+            sb.append("\"auth\":").append(success).append(", ");
             sb.append("\"accountDoesNotExist\":").append(accountDoesNotExist).append(", ");
             sb.append("\"wrongPassword\":").append(wrongPassword).append(", ");
             sb.append("\"redirectUrl\":\"").append(redirectUrl).append("\"");
@@ -44,8 +44,10 @@ public class Login extends HttpServlet {
             UserBussiness userBussiness = new UserBussiness();
             User user = userBussiness.authenticateUser(email, password);
             req.getSession().setAttribute("user", user);
-            toSend.auth = true;
-            toSend.redirectUrl = "index.jsp";
+            if (user != null) {
+                toSend.success = true;
+                toSend.redirectUrl = "index.jsp";
+            }
             toSend.wrongPassword = false;
             toSend.accountDoesNotExist = false;
         } catch(UserDoesNotExist e) {

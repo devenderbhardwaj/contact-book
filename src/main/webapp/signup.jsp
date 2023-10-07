@@ -67,7 +67,7 @@
             request.onload = () => {
                 if (request.status == 200) {
                     const response = JSON.parse(request.responseText);
-                    if (response.created) {
+                    if (response.success) {
                         alert("Account Created. You may login now");
                     }
                     if (response.alreadyExist) {
@@ -93,7 +93,7 @@
             request.send(postString);
         }
         else {
-            alert("Dhyan te password bhar le");
+            form.querySelector("#confirm-password").setCustomValidity("Passwords do not match");
         }
     })
 </script>
