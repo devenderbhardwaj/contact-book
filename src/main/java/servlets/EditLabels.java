@@ -18,14 +18,16 @@ public class EditLabels extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private class ResponseData {
-        Boolean auth;
+        Boolean authenticate;
+        Boolean autherize;
         Boolean valid;
         Boolean success;
         String data;
 
         String toJson() {
             StringBuilder sb = new StringBuilder("{");
-            sb.append("\"auth\":").append(auth).append(", ");
+            sb.append("\"authenticate\":").append(authenticate).append(", ");
+            sb.append("\"autherize\":").append(autherize).append(", ");
             sb.append("\"valid\":").append(valid).append(", ");
             sb.append("\"success\":").append(success).append(", ");
             sb.append("\"data\":").append(data);
@@ -54,10 +56,10 @@ public class EditLabels extends HttpServlet {
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            rd.auth = false;
+            rd.authenticate = false;
             return;
         }
-        rd.auth = true;
+        rd.authenticate = true;
 
         Long contact_id;
         ArrayList<Long> label_ids = new ArrayList<>();
