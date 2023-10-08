@@ -10,7 +10,7 @@ import entities.User;
 public class UserBussiness {
     private UserDao userDao;
 
-    public UserBussiness() throws Exception {
+    public UserBussiness() throws ClassNotFoundException, SQLException {
         userDao = new UserDao();
     }
     public boolean addUser(String name, String email, String password) throws SQLException {
@@ -22,7 +22,11 @@ public class UserBussiness {
         return userDao.addUser(user);
     }
 
-    public User authenticateUser(String email, String password) throws WrongPassword, UserDoesNotExist{
+    public boolean addUser(User user) throws SQLException {
+        return userDao.addUser(user);
+    }
+
+    public User authenticateUser(String email, String password) throws WrongPassword, UserDoesNotExist, SQLException{
         User user = userDao.getUser(email);
         if (user == null) {
             throw new UserDoesNotExist();

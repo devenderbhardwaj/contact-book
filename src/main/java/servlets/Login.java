@@ -2,6 +2,8 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+
 import Exceptions.UserDoesNotExist;
 import Exceptions.WrongPassword;
 import bussiness.UserBussiness;
@@ -13,14 +15,16 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class Login extends HttpServlet {
     private class ResponseData {
-        Boolean success = false;
-        Boolean accountDoesNotExist = null;
-        Boolean wrongPassword = null;
-        String redirectUrl = "";
+        Boolean success;
+        Boolean valid;
+        Boolean accountDoesNotExist;
+        Boolean wrongPassword;
+        String redirectUrl;
 
         String toJson() {
             StringBuilder sb = new StringBuilder("{");
             sb.append("\"success\":").append(success).append(", ");
+            sb.append("\"valid\":").append(valid).append(", ");
             sb.append("\"accountDoesNotExist\":").append(accountDoesNotExist).append(", ");
             sb.append("\"wrongPassword\":").append(wrongPassword).append(", ");
             sb.append("\"redirectUrl\":\"").append(redirectUrl).append("\"");
@@ -36,34 +40,51 @@ public class Login extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        ResponseData rd = new ResponseData();
+        process(rd, req, resp);
+        
+        resp.setContentType("text/json");
+        try (PrintWriter writer = resp.getWriter()) {
+            writer.println(rd.toJson());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        UserBussiness userBussiness;
+        try {
+            userBussiness = new UserBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            rd.success = false;
+            e.printStackTrace();
+            return;
+        }
+
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        ResponseData toSend = new ResponseData();
-        try {
-            UserBussiness userBussiness = new UserBussiness();
-            User user = userBussiness.authenticateUser(email, password);
-            req.getSession().setAttribute("user", user);
-            if (user != null) {
-                toSend.success = true;
-                toSend.redirectUrl = "index.jsp";
-            }
-            toSend.wrongPassword = false;
-            toSend.accountDoesNotExist = false;
-        } catch(UserDoesNotExist e) {
-            toSend.accountDoesNotExist = true;
-        } catch(WrongPassword e) {
-            toSend.accountDoesNotExist = false;
-            toSend.wrongPassword = true;
-        } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            e.printStackTrace();
+        if (email == null || password == null) {
+            rd.valid = false;
+            return;
         }
 
-        resp.setContentType("text/json");
-        try (PrintWriter writer = resp.getWriter()) {
-            writer.println(toSend.toJson());
-        } catch (Exception e) {
+        try {
+            User user = userBussiness.authenticateUser(email, password);
+            req.getSession().setAttribute("user", user);
+            rd.success = true;
+            rd.redirectUrl = "index.jsp";
+        } catch (WrongPassword e) {
+            rd.wrongPassword = true;
+            return;
+        } catch (UserDoesNotExist e) {
+            rd.accountDoesNotExist = true;
+            return;
+        } catch (SQLException e) {
+            resp.setStatus(500);
+            rd.success = false;
             e.printStackTrace();
         }
 

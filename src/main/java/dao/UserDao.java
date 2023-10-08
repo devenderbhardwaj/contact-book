@@ -11,7 +11,7 @@ import entities.User;
 public class UserDao {
     private Connection con;
 
-    public UserDao() throws Exception {
+    public UserDao() throws ClassNotFoundException, SQLException {
         con = ConnectionProvider.getConnection();
     }
 
@@ -28,25 +28,22 @@ public class UserDao {
         return rowEffected > 0;
     }
 
-    public User getUser(String email) {
+    public User getUser(String email) throws SQLException {
         String query = "SELECT * FROM users WHERE email = ?";
 
-        User user = new User();
+        User user = null;
 
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
         	preparedStatement.setString(1, email);
             ResultSet rSet = preparedStatement.executeQuery();
 
             if (rSet.next()) {
+                user = new User();
                 user.setId(rSet.getLong("user_id"));
                 user.setName(rSet.getString("name"));
                 user.setPassword(rSet.getString("password"));
                 user.setEmail(rSet.getString("email"));
-            } else {
-                user = null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return user;
     }

@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import bussiness.UserBussiness;
@@ -11,6 +12,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class AddNewUser extends HttpServlet {
+    private class Validate {
+        private static boolean nameValid(String name) {
+            return name != null && (!name.equals(""));
+        }
+
+        private static boolean emailValid(String email) {
+            return email != null && (!email.equals(""));
+        }
+
+        private static boolean passwordValid(String password) {
+            return password != null && (!password.equals(""));
+        }
+
+        static boolean validate(ResponseData rd, String name, String email, String password) {
+            rd.email = emailValid(email);
+            rd.name = nameValid(name);
+            rd.password = passwordValid(password);
+            return rd.email && rd.name && rd.password;
+        }
+    }
+
     private class ResponseData {
         boolean success = false;
         boolean name = false;
@@ -29,27 +51,6 @@ public class AddNewUser extends HttpServlet {
             jsonBuilder.append("}");
             return jsonBuilder.toString();
         }
-
-        private ResponseData nameValid(String name) {
-            this.name = name != null && (!name.equals(""));
-            return this;
-        }
-
-        private ResponseData emailValid(String email) {
-            this.email = email != null && (!email.equals(""));
-            return this;
-        }
-
-        private ResponseData passwordValid(String password) {
-            this.password = password != null && (!password.equals(""));
-            return this;
-        }
-
-        private ResponseData validate(String name, String email, String password) {
-            return this.nameValid(name)
-                    .emailValid(email)
-                    .passwordValid(password);
-        }
     };
 
     /**
@@ -59,38 +60,41 @@ public class AddNewUser extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("name");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
 
         ResponseData rd = new ResponseData();
-        rd.validate(name, email, password);
 
-        if (rd.name && rd.email && rd.password) {
-            try {
-                UserBussiness userBussiness = new UserBussiness();
-                boolean added = userBussiness.addUser(name, email, password);
-                rd.alreadyExist = !added;
-                rd.success = added;
-            } catch (SQLIntegrityConstraintViolationException e) {
-                rd.alreadyExist = true;
-                rd.success = false;
-            } catch (Exception e) {
-                rd.success = false;
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                e.printStackTrace();
-            }
-        }
+        process(rd, req, resp);
 
         resp.setContentType("text/json");
         try (PrintWriter out = resp.getWriter()) {
             out.println(rd.toJson());
         } catch (Exception e) {
             e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
+    private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
 
+        if (!Validate.validate(rd, name, email, password)) {
+            return;
+        }
+        ;
+        try {
+            UserBussiness userBussiness = new UserBussiness();
+            boolean added = userBussiness.addUser(name, email, password);
+            rd.alreadyExist = !added;
+            rd.success = added;
+        } catch (SQLIntegrityConstraintViolationException e) {
+            rd.alreadyExist = true;
+            rd.success = false;
+        } catch (ClassNotFoundException|SQLException e) {
+            rd.success = false;
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+        }
+    }
 
 }
