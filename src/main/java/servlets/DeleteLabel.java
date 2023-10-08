@@ -12,15 +12,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class DeleteLabel extends HttpServlet{
     private class ResponseData {
-        Boolean initialAuth ;
-        Boolean validRequest;
+        Boolean auth ;
+        Boolean valid;
         Boolean success;
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder("{");
-            sb.append("\"initialAuth\":").append(initialAuth).append(",");
-            sb.append("\"validRequest\":").append(validRequest).append(",");
+            sb.append("\"initialAuth\":").append(auth).append(",");
+            sb.append("\"validRequest\":").append(valid).append(",");
             sb.append("\"success\":").append(success);
             sb.append("}");
             return sb.toString();
@@ -46,28 +46,28 @@ public class DeleteLabel extends HttpServlet{
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
-            rd.initialAuth = false;
+            rd.auth = false;
             resp.setStatus(401);
             return ;
         }
-        rd.initialAuth = true;
+        rd.auth = true;
         try {
             long label_id = Long.parseLong(req.getParameter("label_id"));
 
             LabelBussiness labelBussiness = new LabelBussiness();
             if (labelBussiness.LabelUserRelation(user, label_id)) {
-                rd.validRequest = true;
+                rd.valid = true;
                 if (labelBussiness.deleteLabel(label_id)) {
                     rd.success = true;
                 } else {
                     rd.success = false;
                 }; 
             } else {
-                rd.validRequest = false;
+                rd.valid = false;
                 return ;
             }
         } catch (NumberFormatException e) {
-            rd.validRequest = false;
+            rd.valid = false;
             e.printStackTrace();
             return ;
         } catch (Exception e) {

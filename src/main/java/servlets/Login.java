@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class Login extends HttpServlet {
-    private class Response {
+    private class ResponseData {
         Boolean success = false;
         Boolean accountDoesNotExist = null;
         Boolean wrongPassword = null;
@@ -39,7 +39,7 @@ public class Login extends HttpServlet {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        Response toSend = new Response();
+        ResponseData toSend = new ResponseData();
         try {
             UserBussiness userBussiness = new UserBussiness();
             User user = userBussiness.authenticateUser(email, password);

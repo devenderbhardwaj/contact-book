@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AddLabel extends HttpServlet {
 
-    class ResponseData {
+    private class ResponseData {
         Boolean auth;
         Boolean success;
         Boolean valid;

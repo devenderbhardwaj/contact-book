@@ -177,9 +177,9 @@ export class ContactServiceClass {
         request.onload = () => {
             if (request.status == 200) {
                 const resposne = JSON.parse(request.responseText);
-                if (resposne.contact) {
+                if (resposne.success) {
                     const index = this.contacts.findIndex(c => c.id == contact.id);
-                    this.contacts[index].labels = resposne.contact.labels;
+                    this.contacts[index].labels = resposne.data.labels;
                     successCallBack?.(this.contacts[index]);
                     this.#refresh();
                 }
@@ -188,6 +188,7 @@ export class ContactServiceClass {
                 }
             }
             else {
+                failureCallback?.();
                 alert(request.statusText);
             }
         }

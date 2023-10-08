@@ -13,25 +13,26 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class EditLabels extends HttpServlet {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	class ResponseData {
+    private class ResponseData {
         Boolean auth;
-        Boolean dataValidation;
+        Boolean valid;
         Boolean success;
-        String contactJson;
+        String data;
 
         String toJson() {
             StringBuilder sb = new StringBuilder("{");
             sb.append("\"auth\":").append(auth).append(", ");
-            sb.append("\"valid\":").append(dataValidation).append(", ");
+            sb.append("\"valid\":").append(valid).append(", ");
             sb.append("\"success\":").append(success).append(", ");
-            sb.append("\"contact\":").append(contactJson);
+            sb.append("\"data\":").append(data);
             sb.append("}");
             return sb.toString();
         }
+
         @Override
         public String toString() {
             return toJson();
@@ -40,38 +41,57 @@ public class EditLabels extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ResponseData responseData = new ResponseData();
+        ResponseData rd = new ResponseData();
+        process(rd, req, resp);
+
+        resp.setContentType("text/json");
+        try (PrintWriter out = resp.getWriter()) {
+            out.println(rd.toJson());
+        }
+    }
+
+    private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            responseData.auth = false;
-        } else {
-            responseData.auth = true;
-            ArrayList<Long> label_ids = new ArrayList<>();
-            try {
-                Long contact_id = Long.parseLong(req.getParameter("contact_id"));
-                String[] ids = req.getParameterValues("id");
-                if (ids != null) {
-                    for (String idString : ids) {
-                        label_ids.add(Long.parseLong(idString));
-                    }
-                }
-                responseData.dataValidation = true;
-                ContactBussiness cb = new ContactBussiness();
-                responseData.contactJson  = cb.editLabels(user, contact_id, label_ids);
-                responseData.success = true;
-            } catch (NumberFormatException | NullPointerException e) {
-                responseData.dataValidation = false;
-                e.printStackTrace();
-            } catch (Exception e) {
-                responseData.success = false;
-                e.printStackTrace();
-            }
+            rd.auth = false;
+            return;
+        }
+        rd.auth = true;
+
+        Long contact_id;
+        ArrayList<Long> label_ids = new ArrayList<>();
+        try {
+            contact_id = Long.parseLong(req.getParameter("contact_id"));
+        } catch (NumberFormatException | NullPointerException e) {
+            e.printStackTrace();
+            rd.valid = false;
+            return;
         }
 
-        try (PrintWriter out = resp.getWriter()) {
-            out.println(responseData.toJson());
+        try {
+            String[] ids = req.getParameterValues("id");
+            for (String idString : ids) {
+                label_ids.add(Long.parseLong(idString));
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            rd.valid = false;
+            return;
+        } catch (NullPointerException e) {
+
         }
+        rd.valid = true;
+
+        try {
+            ContactBussiness cb = new ContactBussiness();
+            rd.data = cb.editLabels(user, contact_id, label_ids);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ;
+        }
+        rd.success = true;
+
     }
 
 }
