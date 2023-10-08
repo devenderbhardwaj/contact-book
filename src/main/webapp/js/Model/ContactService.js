@@ -96,11 +96,15 @@ export class ContactServiceClass {
 
         req.onload = () => {
             if (req.status == 200) {
-                const responseContact = JSON.parse(req.responseText);
-                const contact = new Contact(responseContact);
-                const index = this.contacts.findIndex(item => item.id == contact.id);
-                this.contacts.splice(index, 1, contact);
-                successCallBack?.(contact);
+                const response = JSON.parse(req.responseText);
+                if (response.success) {
+                    const contact = new Contact(response.data);
+                    const index = this.contacts.findIndex(item => item.id == contact.id);
+                    this.contacts.splice(index, 1, contact);
+                    successCallBack?.(contact);
+                } else {
+                    errorCallBack?.();
+                }
             } else {
                 errorCallBack?.();
             }
