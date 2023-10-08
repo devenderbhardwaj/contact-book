@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
-import Exceptions.UserDoesNotExist;
+import Exceptions.DoesNotExistException;
 import Exceptions.WrongPassword;
 import bussiness.UserBussiness;
 import entities.User;
@@ -79,7 +79,7 @@ public class Login extends HttpServlet {
         } catch (WrongPassword e) {
             rd.wrongPassword = true;
             return;
-        } catch (UserDoesNotExist e) {
+        } catch (DoesNotExistException e) {
             rd.accountDoesNotExist = true;
             return;
         } catch (SQLException e) {

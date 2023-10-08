@@ -2,7 +2,10 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import bussiness.LabelBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
@@ -46,6 +49,15 @@ public class DeleteLabel extends HttpServlet{
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        LabelBussiness labelBussiness;
+        try {
+            labelBussiness = new LabelBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            resp.setStatus(500);
+            return ;
+        }
+
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             rd.authenticate = false;
@@ -61,25 +73,25 @@ public class DeleteLabel extends HttpServlet{
             rd.valid = false;
             return ;
         }
+        rd.valid = true;
 
         try {
-            LabelBussiness labelBussiness = new LabelBussiness();
-            if (labelBussiness.LabelUserRelation(user, label_id)) {
-                rd.valid = true;
-                if (labelBussiness.deleteLabel(label_id)) {
-                    rd.success = true;
-                } else {
-                    rd.success = false;
-                }; 
+            if (labelBussiness.deleteLabel(user, label_id)) {
+                rd.autherize = true;
+                rd.success = true;
             } else {
-                rd.valid = false;
-                return ;
+                rd.success = false;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             resp.setStatus(500);
             e.printStackTrace();
             return ;
+        } catch (DoesNotExistException e) {
+            rd.autherize = false;
+        } catch (UnAuthorizedActionException e) {
+            rd.autherize = false;
         }
+        
     }
     
 }

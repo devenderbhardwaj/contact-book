@@ -1,7 +1,10 @@
 package bussiness;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import dao.LabelDao;
 import entities.Label;
 import entities.User;
@@ -9,23 +12,23 @@ import entities.User;
 public class LabelBussiness {
     LabelDao labelDao;
 
-    public LabelBussiness() throws Exception {
+    public LabelBussiness() throws ClassNotFoundException, SQLException{
         labelDao = new LabelDao();
     }
 
-    public String addLabel(Label label, User user) {
+    public Label addLabel(Label label, User user) throws SQLException {
         return addLabel(label.getText(), user.getId());
     }
 
-    public String addLabel(String text, Long user_id) {
-        Label label =  labelDao.addLabel(text, user_id);
-        if (label == null) {
-            return "null";
-        }
-        return label.toJson();
+    public Label addLabel(String text, Long user_id) throws SQLException {
+        return  labelDao.addLabel(text, user_id);
     }
 
-    public boolean LabelUserRelation(User user, Long label_id) {
+    public Label addLabel(String text, User user) throws SQLException {
+        return addLabel(text, user.getId());
+    }
+
+    public boolean LabelUserRelation(User user, Long label_id) throws SQLException {
         Label labelfromDatabase = labelDao.getLabel(label_id);
         if (labelfromDatabase != null && labelfromDatabase.getUser_id() == user.getId()) {
             return true;
@@ -33,7 +36,7 @@ public class LabelBussiness {
         return false;
     }
 
-    public ArrayList<Label> getLabels (ArrayList<Long> ids) {
+    public ArrayList<Label> getLabels (ArrayList<Long> ids) throws SQLException {
         ArrayList<Label> list = new ArrayList<>();
         for (long id : ids) {
             list.add(labelDao.getLabel(id));
@@ -41,7 +44,10 @@ public class LabelBussiness {
         return list;
     }
 
-    public String getLabels(User user) {
+    public ArrayList<Label> getLabels(User user) throws SQLException {
+        return labelDao.getLabels(user);
+    }
+    public String getLabelsString(User user) throws SQLException {
         ArrayList<Label> list = labelDao.getLabels(user);
         if (list.size() == 0 ) {
             return "[]";
@@ -56,7 +62,19 @@ public class LabelBussiness {
         return sb.toString();
     }
 
-    public boolean deleteLabel(long label_id) {
+    public boolean deleteLabel(User user, long label_id) throws SQLException, DoesNotExistException, UnAuthorizedActionException {
+        if (!autherize(user, label_id)) {
+            throw new UnAuthorizedActionException("UnAuthorized attempt to delete label");
+        }
         return labelDao.deleteLabel(label_id);
+
+    }
+
+    private boolean autherize(User user, long label_id) throws SQLException, DoesNotExistException {
+        Label label = labelDao.getLabel(label_id);
+        if (label == null) {
+            throw new DoesNotExistException("Label Does not Exist");
+        }
+        return label.getUser_id() == user.getId();
     }
 }

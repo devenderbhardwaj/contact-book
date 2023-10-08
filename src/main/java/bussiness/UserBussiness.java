@@ -2,7 +2,7 @@ package bussiness;
 
 import java.sql.SQLException;
 
-import Exceptions.UserDoesNotExist;
+import Exceptions.DoesNotExistException;
 import Exceptions.WrongPassword;
 import dao.UserDao;
 import entities.User;
@@ -26,10 +26,10 @@ public class UserBussiness {
         return userDao.addUser(user);
     }
 
-    public User authenticateUser(String email, String password) throws WrongPassword, UserDoesNotExist, SQLException{
+    public User authenticateUser(String email, String password) throws WrongPassword, DoesNotExistException, SQLException{
         User user = userDao.getUser(email);
         if (user == null) {
-            throw new UserDoesNotExist();
+            throw new DoesNotExistException();
         }
         if (!user.getPassword().equals(password)) {
             throw new WrongPassword();

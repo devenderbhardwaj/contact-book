@@ -13,11 +13,11 @@ import entities.User;
 public class LabelDao {
     private Connection con;
 
-    public LabelDao() throws Exception {
+    public LabelDao() throws ClassNotFoundException, SQLException  {
         con = ConnectionProvider.getConnection();
     }
 
-    public Label addLabel(String text, Long user_id) {
+    public Label addLabel(String text, Long user_id) throws SQLException {
         String query = "INSERT INTO labels (label, user_id) VALUES (?, ?)";
         Label label = null;
         try (PreparedStatement pStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,13 +31,11 @@ public class LabelDao {
                     label.setText(text);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return label;
     }
 
-    public Label getLabel(Long label_id) {
+    public Label getLabel(Long label_id) throws SQLException {
         String query = "SELECT * FROM labels where label_id = ?";
         Label toReturn = null;
         try(PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -48,13 +46,11 @@ public class LabelDao {
                 toReturn = new Label(rs.getLong("label_id"), rs.getString("label"));
                 toReturn.setUser_id(rs.getLong("user_id"));
             }
-        } catch(SQLException e) {
-            e.printStackTrace();
         }
         return toReturn;
     }
 
-    public ArrayList<Label> getLabels(User user) {
+    public ArrayList<Label> getLabels(User user) throws SQLException {
         ArrayList<Label> list = new ArrayList<>();
 
         String query = "SELECT * FROM labels WHERE user_id = ?";
@@ -70,20 +66,16 @@ public class LabelDao {
                 label.setUser_id(rs.getLong("user_id"));
                 list.add(label);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return list;
     }
 
-    public boolean deleteLabel(long label_id) {
+    public boolean deleteLabel(long label_id) throws SQLException {
         String query = "DELETE FROM labels WHERE label_id = ?";
         int rowsEffect = 0;
         try (PreparedStatement ps = con.prepareStatement(query)) {
             ps.setLong(1, label_id);
             rowsEffect = ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return rowsEffect > 0;
     }

@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import bussiness.LabelBussiness;
 import entities.User;
@@ -39,8 +40,16 @@ public class AddLabel extends HttpServlet {
             out.println(rd.toJson());
         }
     }
-
+    
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        LabelBussiness lBussiness;
+        try {
+            lBussiness = new LabelBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return ;
+        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -56,10 +65,10 @@ public class AddLabel extends HttpServlet {
             return;
         }
         rd.valid = true;
+
         try {
-            LabelBussiness lBussiness = new LabelBussiness();
-            rd.data = lBussiness.addLabel(labelText, user.getId());
-        } catch (Exception e) {
+            rd.data = lBussiness.addLabel(labelText, user.getId()).toJson();
+        } catch (SQLException e) {
             rd.success = false;
             resp.setStatus(500);
             e.printStackTrace();

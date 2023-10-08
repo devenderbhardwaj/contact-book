@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import bussiness.LabelBussiness;
 import entities.User;
@@ -40,6 +41,15 @@ public class GetLabels extends HttpServlet{
     }
     
     private void process(ResponseData rd , HttpServletRequest req, HttpServletResponse resp) {
+        LabelBussiness lbBussiness;
+        try {
+            lbBussiness = new LabelBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return ;
+        }
+
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             rd.auth = false;
@@ -48,11 +58,11 @@ public class GetLabels extends HttpServlet{
         }
         rd.auth = true;
         try {
-            LabelBussiness lbBussiness = new LabelBussiness();
-            rd.data = lbBussiness.getLabels(user);
+            rd.data = lbBussiness.getLabelsString(user);
             rd.success = true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             rd.success = false;
+            resp.setStatus(500);
             e.printStackTrace();
         }
 
