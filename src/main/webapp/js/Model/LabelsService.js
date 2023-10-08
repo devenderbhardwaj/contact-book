@@ -42,11 +42,9 @@ class LabelServiceClass {
         request.onload = () => {
             if (request.status == 200) {
                 const response = JSON.parse(request.responseText);
-                console.log(request.responseText);
                 console.log(response);
                 if (response.success) {
-
-                    response.label && this.#labels.push(new Label(response.label));
+                    this.#labels.push(new Label(response.data));
                     this.refresh()
                     successCallback?.();
                 } else {
