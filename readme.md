@@ -21,7 +21,7 @@ Welcome to the Contact Book Web Application! This project allows users to manage
 1. **Clone the Repository:**
 
 2. **Database Setup:**
-- Set up your database and configure the database according to databasae-schema in `database-schema.properties`
+- Set up your database and configure the database according to databasae-schema in `database-schema.sql`
 
 3. **Build and Run:**
 - Deploy the application on a Java Servlets compatible server.
