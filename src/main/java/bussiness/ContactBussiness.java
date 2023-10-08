@@ -1,7 +1,10 @@
 package bussiness;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import dao.ContactDao;
 import entities.Contact;
 import entities.Label;
@@ -11,37 +14,24 @@ public class ContactBussiness {
 
     ContactDao contactDao;
 
-    public ContactBussiness() throws Exception {
+    public ContactBussiness() throws ClassNotFoundException, SQLException {
         contactDao = new ContactDao();
     }
-
-    private Contact ContactUserRelation(User user, Long contact_id) throws Exception {
-        Contact contactFromDatabase = contactDao.getContact(contact_id);
-        if (contactFromDatabase != null && contactFromDatabase.getUser_id() == user.getId()) {
-            contactFromDatabase.setLabels(getLabels(contact_id));
-            return contactFromDatabase;
-        }
-        return null;
+    
+    public Contact save(Contact contact) throws SQLException {
+        return contactDao.saveContact(contact);      
     }
 
-    public String save(Contact contact) {
-        contactDao.saveContact(contact).toJson();
-        if (contact.getId() == 0) {
-            return "false";
-        } else {
-            return contact.toJson();
-        }
-    }
-
-    public ArrayList<Label> getLabels(Long contact_id) throws Exception {
+    public ArrayList<Label> getLabels(Long contact_id) throws SQLException, ClassNotFoundException {
         var list = contactDao.getLabelsIds(contact_id);
         LabelBussiness labelBussiness = new LabelBussiness();
         return labelBussiness.getLabels(list);
     }
 
-    public String getContacts(User user) throws Exception {
+public String getContactsString(User user) throws SQLException, ClassNotFoundException{
         var list = contactDao.getContacts(user);
-        if (list.size() == 0) return "[]";
+        if (list.size() == 0)
+            return "[]";
         StringBuilder sb = new StringBuilder();
         sb.append("[");
         for (Contact contact : list) {
@@ -56,36 +46,39 @@ public class ContactBussiness {
         return sb.toString();
     }
 
-    public boolean deleteContact(User user, long contact_id) {
-        Contact contactFromDatabase = contactDao.getContact(contact_id);
-        if (contactFromDatabase != null && contactFromDatabase.getUser_id() == user.getId()) {
-            return contactDao.deleteContact(contact_id);
-        }
-        return false;
+    public boolean deleteContact(User user, long contact_id) throws UnAuthorizedActionException, SQLException, DoesNotExistException {
+        autherize(user, contact_id);
+        return contactDao.deleteContact(contact_id);
     }
 
-    public String editContact(User user, Contact contact) throws Exception {
-        Contact contactFromDatabase = contactDao.getContact(contact.getId());
-        if (contactFromDatabase != null && contactFromDatabase.getUser_id() == user.getId()) {
-            contact = contactDao.editContact(contact);
-            contact.setLabels(getLabels(contact.getId()));
-        }
-        return contact.toJson();
+    public Contact editContact(User user, Contact contact) throws SQLException, DoesNotExistException, UnAuthorizedActionException{
+        autherize(user, contact.getId());
+        return contactDao.editContact(contact);
     }
 
-    public String editLabels(User user, Long contact_id, ArrayList<Long> ids) throws Exception {
-        Contact contact = ContactUserRelation(user, contact_id);
+    public String editLabels(User user, long contact_id, ArrayList<Long> ids) throws SQLException, DoesNotExistException, UnAuthorizedActionException, ClassNotFoundException {
+        Contact contact = autherize(user, contact_id);
         LabelBussiness labelBussiness = new LabelBussiness();
+        labelBussiness.autherize(user, ids);
         ArrayList<Label> labelList = labelBussiness.getLabels(ids);
         Contact toReturn = null;
-        if (contact != null) {
-            contactDao.deleteLabels(contact);
-            contactDao.insertLabels(contact, labelList);
-            toReturn = contactDao.getContact(contact_id);
-            toReturn.setLabels(getLabels(contact_id));
-        } else {
-            throw new Exception("Something is fishy");
-        }
+
+        contactDao.deleteLabels(contact);
+        contactDao.insertLabels(contact, labelList);
+        toReturn = contactDao.getContact(contact_id);
+        toReturn.setLabels(getLabels(contact_id));
         return toReturn.toJson();
+    }
+
+    private Contact autherize(User user, long contact_id) throws SQLException, DoesNotExistException, UnAuthorizedActionException {
+        Contact contactFromDatabase = contactDao.getContact(contact_id);
+        if (contactFromDatabase == null) {
+            throw new DoesNotExistException("Contact with id " + contact_id + " does not exist");
+        }
+        if ( !(contactFromDatabase.getUser_id() == user.getId())) {
+            throw new UnAuthorizedActionException("UnAuthorized attempt to delete contact");
+        }
+        return contactFromDatabase;
+
     }
 }

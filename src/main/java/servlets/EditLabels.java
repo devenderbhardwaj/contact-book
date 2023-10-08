@@ -2,8 +2,11 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import bussiness.ContactBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
@@ -53,6 +56,14 @@ public class EditLabels extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        ContactBussiness cb;
+        try {
+            cb = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return ;
+        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -86,13 +97,18 @@ public class EditLabels extends HttpServlet {
         rd.valid = true;
 
         try {
-            ContactBussiness cb = new ContactBussiness();
             rd.data = cb.editLabels(user, contact_id, label_ids);
-        } catch (Exception e) {
+            rd.success = true;
+        } catch (ClassNotFoundException|SQLException e) {
+            resp.setStatus(500);
             e.printStackTrace();
             return ;
-        }
-        rd.success = true;
+        } catch (DoesNotExistException |UnAuthorizedActionException e) {
+            resp.setStatus(401);
+            rd.autherize = false;
+            e.printStackTrace();
+            return ;
+        } 
 
     }
 

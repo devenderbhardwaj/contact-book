@@ -12,13 +12,13 @@ import entities.Label;
 import entities.User;
 
 public class ContactDao {
-    private Connection con ;
+    private Connection con;
 
-    public ContactDao() throws Exception {
+    public ContactDao() throws ClassNotFoundException, SQLException {
         con = ConnectionProvider.getConnection();
     }
 
-    public Contact getContact(long id) {
+    public Contact getContact(long id) throws SQLException {
         Contact contact = new Contact(id);
         String query = "SELECT * FROM contacts WHERE contact_id = ?";
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
@@ -33,13 +33,12 @@ public class ContactDao {
             } else {
                 contact = null;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return contact;
 
     }
-    public  Contact saveContact(Contact contact) {
+
+    public Contact saveContact(Contact contact) throws SQLException {
         String query = "INSERT INTO contacts (name, phone, email, address, user_id) VALUES (?, ?, ?, ?, ?);";
         try (PreparedStatement statement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, contact.getName());
@@ -48,20 +47,17 @@ public class ContactDao {
             statement.setString(4, contact.getAddress());
             statement.setLong(5, contact.getUser_id());
             int affectedRows = statement.executeUpdate();
-            long id = 0;
-            if (affectedRows > 0) {
-                ResultSet resultSet = statement.getGeneratedKeys();
-                while (resultSet.next()) {
-                    id = resultSet.getLong(1);
-                }
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (affectedRows > 0 && resultSet.next()) {
+                contact.setId(resultSet.getLong(1));
+            } else {
+                return null;
             }
-            contact.setId(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return contact;
     }
-    public ArrayList<Contact> getContacts(User user) {
+
+    public ArrayList<Contact> getContacts(User user) throws SQLException {
         String query = "SELECT * FROM contacts WHERE user_id = ?";
         ArrayList<Contact> list = new ArrayList<>();
         try (PreparedStatement statment = con.prepareStatement(query)) {
@@ -70,11 +66,11 @@ public class ContactDao {
             while (result.next()) {
                 Long id = result.getLong("contact_id");
                 Long user_id = result.getLong("user_id");
-                String name  = result.getString("name");
+                String name = result.getString("name");
                 String phone = result.getString("phone");
                 String email = result.getString("email");
                 String address = result.getString("address");
-                
+
                 Contact contact = new Contact(name);
                 contact.setId(id);
                 contact.setUser_id(user_id);
@@ -83,46 +79,40 @@ public class ContactDao {
                 contact.setPhone(phone);
                 list.add(contact);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return list;
     }
 
-    public boolean deleteContact(Long id) {
+    public boolean deleteContact(Long id) throws SQLException {
         String query = "DELETE FROM contacts WHERE contact_id = ?";
         int rowEffected = 0;
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setLong(1, id);
             rowEffected = preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return rowEffected != 0; 
+        return rowEffected != 0;
     }
 
-    public Contact editContact(Contact contact) {
-        String query = "UPDATE contacts SET " + 
-            "name = ? ," + 
-            "phone = ? ," + 
-            "email = ? , " +
-            "address = ? WHERE contact_id = ?" ;
+    public Contact editContact(Contact contact) throws SQLException {
+        String query = "UPDATE contacts SET " +
+                "name = ? ," +
+                "phone = ? ," +
+                "email = ? , " +
+                "address = ? WHERE contact_id = ?";
 
-        try (PreparedStatement preparedStatement = con.prepareStatement(query )) {
-        	preparedStatement.setString(1, contact.getName());
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, contact.getName());
             preparedStatement.setString(2, contact.getPhone());
             preparedStatement.setString(3, contact.getEmail());
             preparedStatement.setString(4, contact.getAddress());
             preparedStatement.setLong(5, contact.getId());
-            
+
             preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return contact;
     }
 
-    public Contact insertLabels(Contact contact, ArrayList<Label> labels) {
+    public Contact insertLabels(Contact contact, ArrayList<Label> labels) throws SQLException {
         ArrayList<Label> labelList = new ArrayList<>();
         for (Label label : labels) {
             String query = "INSERT INTO contact_label (contact_id, label_id) VALUES (?, ?)";
@@ -131,8 +121,6 @@ public class ContactDao {
                 preparedStatement.setLong(1, contact.getId());
                 preparedStatement.setLong(2, label.getId());
                 rowEffected = preparedStatement.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
             if (rowEffected > 0) {
                 labelList.add(label);
@@ -141,19 +129,19 @@ public class ContactDao {
         contact.setLabels(labelList);
         return contact;
     }
-    public long deleteLabels(Contact contact) {
+
+    public long deleteLabels(Contact contact) throws SQLException {
         String query = "DELETE FROM contact_label WHERE contact_id = ?";
 
         int rowEffected = 0;
         try (PreparedStatement pStatement = con.prepareStatement(query)) {
             pStatement.setLong(1, contact.getId());
             rowEffected = pStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return rowEffected;
     }
-    public ArrayList<Long> getLabelsIds(Long contact_id) {
+
+    public ArrayList<Long> getLabelsIds(Long contact_id) throws SQLException {
         ArrayList<Long> list = new ArrayList<>();
         String query = "SELECT * FROM contact_label WHERE contact_id = ?";
 
@@ -164,8 +152,6 @@ public class ContactDao {
             while (rs.next()) {
                 list.add(rs.getLong("label_id"));
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return list;
     }

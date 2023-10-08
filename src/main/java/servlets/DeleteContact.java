@@ -2,7 +2,10 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import bussiness.ContactBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
@@ -52,8 +55,17 @@ public class DeleteContact extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        ContactBussiness contactBussiness;
+        try {
+            contactBussiness = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return ;
+        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
+            resp.setStatus(401);
             rd.authenticate = false;
             return;
         }
@@ -69,9 +81,15 @@ public class DeleteContact extends HttpServlet {
         }
         
         try {
-            ContactBussiness contactBussiness = new ContactBussiness();
             rd.success = contactBussiness.deleteContact(user, id);
-        } catch (Exception e) {
+        } catch (UnAuthorizedActionException|DoesNotExistException e) {
+            rd.autherize = false;
+            rd.success = false;
+            resp.setStatus(401);
+            e.printStackTrace();
+            return ;
+        } catch (SQLException e) {
+            resp.setStatus(500);
             e.printStackTrace();
         }
     }

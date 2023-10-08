@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
 import bussiness.ContactBussiness;
 import entities.User;
@@ -46,6 +47,14 @@ public class GetContacts extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        ContactBussiness contactBussiness;
+        try {
+            contactBussiness = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return ;
+        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -53,14 +62,14 @@ public class GetContacts extends HttpServlet {
             return;
         }
         rd.auth = true;
+
         try {
-            ContactBussiness bussiness = new ContactBussiness();
-            rd.data = bussiness.getContacts(user);
+            rd.data = contactBussiness.getContactsString(user);
             rd.success = true;
-        } catch (Exception e) {
-            rd.success = false;
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (ClassNotFoundException|SQLException e) {
+            resp.setStatus(500);
             e.printStackTrace();
+            return ;
         }
     }
     

@@ -59,7 +59,7 @@
     form.addEventListener("submit", (e) => {
         e.preventDefault();
         const data = new FormData(form);
-        if (data.get("password") === data.get("confirm-password")) {
+        if (data.get("password").localeCompare(data.get("confirm-password")) == 0) {
             data.delete("confirm-password");
             const postString = new URLSearchParams(data).toString();
 

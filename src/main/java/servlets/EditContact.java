@@ -2,7 +2,10 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 
+import Exceptions.DoesNotExistException;
+import Exceptions.UnAuthorizedActionException;
 import bussiness.ContactBussiness;
 import entities.Contact;
 import entities.User;
@@ -54,9 +57,19 @@ public class EditContact extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
+        ContactBussiness cb;
+        try {
+            cb = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            resp.setStatus(500);
+            e.printStackTrace();
+            return;
+        }
+
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             rd.authenticate = false;
+            rd.success = false;
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -67,6 +80,7 @@ public class EditContact extends HttpServlet {
             id = Long.parseLong(req.getParameter("contact-id"));
         } catch (NumberFormatException e) {
             rd.valid = false;
+            rd.success = false;
             return;
         }
         String name = req.getParameter("name");
@@ -75,6 +89,7 @@ public class EditContact extends HttpServlet {
         String address = req.getParameter("address");
         if (name == null || name.equals("")) {
             rd.valid = false;
+            rd.success = false;
             return;
         }
         rd.valid = true;
@@ -85,12 +100,19 @@ public class EditContact extends HttpServlet {
         contact.setName(name);
 
         try {
-            ContactBussiness cb = new ContactBussiness();
-            rd.data = cb.editContact(user, contact);
-        } catch(Exception e) {
+            rd.data = cb.editContact(user, contact).toJson();
+        } catch (SQLException e) {
+            resp.setStatus(500);
             rd.success = false;
+            e.printStackTrace();
             return ;
+        } catch (DoesNotExistException | UnAuthorizedActionException e) {
+            rd.autherize = false;
+            rd.success = false;
+            resp.setStatus(401);
+            e.printStackTrace();
         }
+
         rd.success = true;
     }
 }

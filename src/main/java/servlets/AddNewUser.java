@@ -43,11 +43,11 @@ public class AddNewUser extends HttpServlet {
         String toJson() {
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.append("{");
-            jsonBuilder.append("\"created\":").append(success).append(",");
+            jsonBuilder.append("\"success\":").append(success).append(",");
             jsonBuilder.append("\"name\":").append(name).append(",");
             jsonBuilder.append("\"email\":").append(email).append(",");
             jsonBuilder.append("\"password\":").append(password).append(",");
-            jsonBuilder.append("\"alreadyExist\":").append(alreadyExist).append(",");
+            jsonBuilder.append("\"alreadyExist\":").append(alreadyExist);
             jsonBuilder.append("}");
             return jsonBuilder.toString();
         }

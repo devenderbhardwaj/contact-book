@@ -28,14 +28,6 @@ public class LabelBussiness {
         return addLabel(text, user.getId());
     }
 
-    public boolean LabelUserRelation(User user, Long label_id) throws SQLException {
-        Label labelfromDatabase = labelDao.getLabel(label_id);
-        if (labelfromDatabase != null && labelfromDatabase.getUser_id() == user.getId()) {
-            return true;
-        }
-        return false;
-    }
-
     public ArrayList<Label> getLabels (ArrayList<Long> ids) throws SQLException {
         ArrayList<Label> list = new ArrayList<>();
         for (long id : ids) {
@@ -77,4 +69,12 @@ public class LabelBussiness {
         }
         return label.getUser_id() == user.getId();
     }
+
+    public boolean autherize(User user, ArrayList<Long> ids) throws SQLException, DoesNotExistException {
+        for (long id: ids) {
+            autherize(user, id);
+        }
+        return true;
+    }
+
 }
