@@ -96,7 +96,7 @@ export class ContactView {
         element.innerHTML = (
             `
             <div class="profile-picture">
-                <img src="" alt="profile-picture">
+                <img src="/contacts/images/user-circle.png" alt="profile-picture">
             </div>
             <div class="name">
                 <h2>${this.#contact.name}</h2>
@@ -146,8 +146,8 @@ export class ContactView {
             `
             <div class="info card">
                 <p>Name: ${this.#contact.name}</p>
-                <p>Phone: ${this.#contact.phone}</p>
-                <p>Email: ${this.#contact.email}</p>
+                <p>Phone: <a href='tel:${this.#contact.phone}'>${this.#contact.phone}</a></p>
+                <p>Email: <a href='mailto: ${this.#contact.email}'>${this.#contact.email}</a></p>
                 <p>Address: ${this.#contact.address}</p>
             </div>
             `

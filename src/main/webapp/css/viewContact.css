@@ -2,16 +2,22 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    padding-top: 2rem;
 }
 
 .view-contact .profile-picture {
-    height: calc(150px + 6vw);
-    width: calc(150px + 6vw);
-    background-color: aqua;
-    border-radius: 50%;
+    height: calc(100px + 6vw);
+    width: calc(100px + 6vw);
     display: flex;
     align-items: center;
     justify-content: center;
+
+    & img {
+        height: 100%;
+        width: 100%;
+        background-color: hsl(0 0% 95%);
+        border-radius: 50%;
+    }
 }
 
 
@@ -19,8 +25,9 @@
 .view-contact .heading {
     display: flex;
     font-family: Arial, Helvetica, sans-serif;
-
-    padding: 1rem;
+    padding: 1vw;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .view-contact .heading .name {
@@ -87,7 +94,7 @@
 }
 
 .view-contact .info {
-    padding: 1rem;
+    padding: 1vw;
 }
 .view-contact .info .card{
     border-radius: 1rem;

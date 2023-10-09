@@ -11,7 +11,7 @@
         & input {
             padding: 0.5rem;
             font-size: 1.15rem;
-            width: clamp(280px, 55%, 400px);
+            width: clamp(200px, calc(180px + 20vw), 450px);
             margin-inline: auto;
         }
 
@@ -19,8 +19,6 @@
             display: none;
         }
     }
-
-
 }
 
 .all-contacts {
@@ -68,6 +66,10 @@
         padding: 2px 4px;
         border-radius: 2px;
         cursor: default;
+    }
+
+    & a {
+        color: inherit;
     }
 }
 .all-contacts .table-body .table-row:hover {

@@ -105,8 +105,8 @@ export class ContactsTableView {
         rowElement.innerHTML = (
             `
                 <div class='name'>${contact.name}</div>
-                <div>${contact.phone}</div>
-                <div>${contact.email}</div>
+                <div><a href='tel:${contact.phone}'>${contact.phone}</a></div>
+                <div> <a href='mailto: ${contact.email}'>${contact.email}</a></div>
                 <div>${contact.labels?.map(label => `<span class="contact-label">${label.text}</span>`).join(", ")}</div>
                 <div>
                     <button class='edit'>edit</button>
