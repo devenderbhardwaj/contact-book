@@ -114,31 +114,50 @@
 }
 
 .view-contact .edit-contact {
+    max-width: 500px;
+    margin-inline: auto;
     display: flex;
     width: 100%;
     position: relative;
     justify-content: center;
+    padding-inline: 2vw;
 }
 
 .view-contact .edit-contact form {
     display: flex;
-    width: 500px;
     flex-direction: column;
-    gap: 20px;
-
-    & label {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    & label input {
-        width: 300px;
-        padding: 0.5em;
-        border-radius: 5px;
-    }
+    gap: 1rem;
+    width: 100%;
+    align-items: center;
     
-    & button {
-        padding: 1rem;
+    & p {
+        width: 100%;
+        margin: 0;
+    }
+
+    & p label {
+        display: block;
+        width: 100%;
+        padding-inline-start: 0.rem;
+        margin-bottom: 0.5rem;
+    }
+	& p input {
+		padding: 0.5rem;
+	}
+    & p input, 
+    p textarea {
+        width: 100%;
+    }
+
+    & p button {
+        display: block;
+        width: 90%;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        margin-inline: auto;
+        font-size: 1.25rem;
+        border: none;
+        background-color: hsl(218.18 44% 75%)
     }
 }
 

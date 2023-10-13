@@ -39,7 +39,8 @@ hr {
 }
 
 .main-container {
-    width: 50%;
+    width: 90%;
+    max-width: 500px;
     margin: auto;
     margin-top: 10px;
 }

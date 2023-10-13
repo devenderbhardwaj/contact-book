@@ -10,8 +10,8 @@ export class ContactView {
     // Action Listener
     #onDelete;
     #onEditSave;
-	#onBack;
-	#onReload;
+    #onBack;
+    #onReload;
 
     /**
      * 
@@ -30,8 +30,8 @@ export class ContactView {
         this.#onEditSave = callBack;
     }
     bindGoBack(callBack) {
-		this.#onBack = callBack;
-	}
+        this.#onBack = callBack;
+    }
     bindOnReload(callBack) {
         this.#onReload = callBack
     }
@@ -43,7 +43,7 @@ export class ContactView {
         const element = document.createElement("div");
         element.className = "view-contact";
         element.dataset['contact_id'] = this.#contact.id;
-           element.append(this.#getContactHeader(editMode));
+        element.append(this.#getContactHeader(editMode));
         if (editMode) {
             element.append(this.#getEditContactForm());
         } else {
@@ -52,47 +52,51 @@ export class ContactView {
         const closeBtn = document.createElement("button");
         element.append(closeBtn);
         closeBtn.outerHTML = "<button type='button' class='close-btn'>Close</button>";
-        element.querySelector(".close-btn").addEventListener("click", () => this.#onBack() );
-       
+        element.querySelector(".close-btn").addEventListener("click", () => this.#onBack());
+
         return element;
     }
-    
+
     #getEditContactForm() {
         const element = document.createElement("div");
         element.className = "edit-contact";
-    
+
         element.innerHTML =
             `<form method="post" name="edit-contact-form" id='edit-contact-form'>
-                <label>Name:
-                    <input type="text" name="name" value='${this.#contact.name}'>
-                </label>
-                <label>Phone:
-                    <input type="tel" name="phone" value='${this.#contact.phone}'>
-                    </label>
-                <label>Email:
-                    <input type="email" name="email" value='${this.#contact.email}'>
-                </label>
-                <label>Address:
-                    <textarea name="address" id="" cols="30" rows="10">${this.#contact.address}</textarea>
-                </label>
-                    <input type='text' name='contact-id' value='${this.#contact.id}'>
+                <p>
+                    <label for="name-inp-c">Name:</label>
+                    <input type="text" name="name" id="name-inp-c" required>
+                </p>
+                <p>
+                    <label for="phone-inp-c">Phone:</label>
+                    <input type="tel" name="phone" id="phone-inp-c">
+                </p>
+                <p>
+                    <label for="email-inp-c">Email:</label>
+                    <input type="email" name="email" id="email-inp-c">
+                </p>
+                <p>
+                    <label for="address-inp-c">Address:</label>
+                    <textarea name="address" id="address-inp-c" cols="30" rows="5"></textarea>
+                </p>
+                <input type='text' name='contact-id' value='${this.#contact.id}'>
             </form>
             `;
-    
+
         const editContactForm = element.querySelector("form");
         editContactForm.addEventListener("submit", (e) => {
             e.preventDefault();
             const formdata = new FormData(editContactForm);
             this.#onEditSave(formdata);
         });
-    
+
         return element;
     }
-    
-    #getContactHeader( editMode = false) {
+
+    #getContactHeader(editMode = false) {
         const element = document.createElement("div");
         element.className = "heading";
-    
+
         element.innerHTML = (
             `
             <div class="profile-picture">
@@ -105,12 +109,12 @@ export class ContactView {
                     <button type='button' class='add-label'>Edit Labels</button>
                 </div>
                 <div class="controls">
-                    ${editMode ? 
-                        `<button type='submit' class='save-btn' form='edit-contact-form'>Save</button>
+                    ${editMode ?
+                `<button type='submit' class='save-btn' form='edit-contact-form'>Save</button>
                         <button type='button' class='cancel-btn'>Cancel</button` :
-                        `<button type='button' class='delete-btn'>Delete</button>
+                `<button type='button' class='delete-btn'>Delete</button>
                         <button type='button' class='edit-btn'>Edit</button>`
-                    }
+            }
                 </div>
             </div>
             `
@@ -119,12 +123,12 @@ export class ContactView {
         editBtn?.addEventListener("click", () => {
             this.#onReload(true);
         });
-    
+
         const cancelBtn = element.querySelector(".controls .cancel-btn");
         cancelBtn?.addEventListener("click", () => {
             this.#onReload(false);
         })
-    
+
         const deleteBtn = element.querySelector(".controls .delete-btn");
         deleteBtn?.addEventListener("click", () => {
             this.#onDelete();
@@ -137,11 +141,11 @@ export class ContactView {
         });
         return element;
     }
-    
+
     #getContactInfoCard() {
         const element = document.createElement("div");
         element.className = 'info';
-    
+
         element.innerHTML = (
             `
             <div class="info card">
@@ -152,7 +156,7 @@ export class ContactView {
             </div>
             `
         );
-            
+
         return element;
     }
 
@@ -161,7 +165,7 @@ export class ContactView {
      * @param {number[]} checked 
      */
     #onLabelChange = (checked) => {
-        const successCallBack = () => this.#onReload(this.#editMode) ;
-        ContactService.labelsEdit(this.#contact, checked, {successCallBack});
+        const successCallBack = () => this.#onReload(this.#editMode);
+        ContactService.labelsEdit(this.#contact, checked, { successCallBack });
     }
 }
