@@ -1,6 +1,8 @@
 import { Contact } from "../Model/Contact.js";
 import { ContactService } from "../Model/ContactService.js";
+import { ProfilePictureService } from "../Model/ProfilePictureService.js";
 import getAllLabelsPopUp from "./AllLabelsPopUp.js";
+import { ProfileDialog } from "./ProfileDailog.js";
 
 export class ContactView {
     #contact;
@@ -65,19 +67,19 @@ export class ContactView {
             `<form method="post" name="edit-contact-form" id='edit-contact-form'>
                 <p>
                     <label for="name-inp-c">Name:</label>
-                    <input type="text" name="name" id="name-inp-c" required>
+                    <input type="text" name="name" id="name-inp-c" value='${this.#contact.name}' required>
                 </p>
                 <p>
                     <label for="phone-inp-c">Phone:</label>
-                    <input type="tel" name="phone" id="phone-inp-c">
+                    <input type="tel" name="phone" id="phone-inp-c" value='${this.#contact.phone}'>
                 </p>
                 <p>
                     <label for="email-inp-c">Email:</label>
-                    <input type="email" name="email" id="email-inp-c">
+                    <input type="email" name="email" id="email-inp-c" value='${this.#contact.email}'>
                 </p>
                 <p>
                     <label for="address-inp-c">Address:</label>
-                    <textarea name="address" id="address-inp-c" cols="30" rows="5"></textarea>
+                    <textarea name="address" id="address-inp-c" cols="30" rows="5">${this.#contact.address}</textarea>
                 </p>
                 <input type='text' name='contact-id' value='${this.#contact.id}'>
             </form>
@@ -119,6 +121,16 @@ export class ContactView {
             </div>
             `
         );
+        const displayPicture = (url) => profile.querySelector("img").src = url;
+        
+        const profile = element.querySelector(".profile-picture");
+        profile.addEventListener("click", () => {
+            const profileDailog = new ProfileDialog(
+                this.#contact.id,
+                profile.querySelector("img").src,
+                {successCallback:displayPicture});
+            profileDailog.show();
+        })
         const editBtn = element.querySelector(".controls .edit-btn");
         editBtn?.addEventListener("click", () => {
             this.#onReload(true);
@@ -139,6 +151,9 @@ export class ContactView {
             element.append(dialog);
             dialog.showModal();
         });
+        {
+            ProfilePictureService.getProfile(this.#contact.id, {successCallBack:displayPicture});
+        }
         return element;
     }
 

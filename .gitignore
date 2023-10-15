@@ -10,5 +10,6 @@ target
 # Others
 Main.java
 node_modules
+Images/*
 
 **/*.json

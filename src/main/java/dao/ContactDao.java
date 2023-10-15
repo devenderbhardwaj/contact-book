@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import entities.Contact;
 import entities.Label;
+import entities.ProfilePicture;
 import entities.User;
 
 public class ContactDao {
@@ -154,5 +155,33 @@ public class ContactDao {
             }
         }
         return list;
+    }
+
+    public boolean saveProfilePicture(ProfilePicture picture) throws SQLException{
+        String query = "UPDATE contacts SET profile_picture_type = ? WHERE contact_id = ?";
+
+        int rowEffected = 0;
+        try(PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, picture.getType());
+            ps.setLong(2, picture.getContact_id());
+            rowEffected = ps.executeUpdate();
+        }
+        return rowEffected > 0;
+    }
+
+    public ProfilePicture getProfilePicture(long contact_id) throws SQLException{
+        String query = "SELECT profile_picture_type FROM contacts WHERE contact_id = ?";
+
+        ProfilePicture profilePicture = null;
+        try(PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setLong(1, contact_id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                profilePicture = new ProfilePicture();
+                profilePicture.setContact_id(contact_id);
+                profilePicture.setType(rs.getString("profile_picture_type"));
+            }
+        }
+        return profilePicture;
     }
 }

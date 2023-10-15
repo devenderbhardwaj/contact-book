@@ -17,6 +17,7 @@
         width: 100%;
         background-color: hsl(0 0% 95%);
         border-radius: 50%;
+        object-fit: cover;
     }
 }
 

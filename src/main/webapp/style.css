@@ -6,6 +6,7 @@
 @import url(css/sidebar.css);
 @import url(css/all-labels-pop-up.css);
 @import url(css/add-labels-dialog.css);
+@import url(css/profile-dialog.css);
 
 * {
 	box-sizing: border-box;

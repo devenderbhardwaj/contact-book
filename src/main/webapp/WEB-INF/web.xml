@@ -1,6 +1,8 @@
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
-
-<web-app>
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_9" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
   <display-name>Archetype Created Web Application</display-name>
   <servlet>
     <servlet-name>saveContact</servlet-name>
@@ -39,13 +41,26 @@
     <servlet-class>servlets.EditLabels</servlet-class>
   </servlet>
   <servlet>
-  	<servlet-name>getLabels</servlet-name>
-  	<servlet-class>servlets.GetLabels</servlet-class>
+    <servlet-name>getLabels</servlet-name>
+    <servlet-class>servlets.GetLabels</servlet-class>
   </servlet>
-	<servlet>
-	<servlet-name>deleteLabel</servlet-name>
-	<servlet-class>servlets.DeleteLabel</servlet-class>
-	</servlet>
+  <servlet>
+    <servlet-name>deleteLabel</servlet-name>
+    <servlet-class>servlets.DeleteLabel</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>saveProfilePicture</servlet-name>
+    <servlet-class>servlets.SaveProfilePicture</servlet-class>
+    <multipart-config>
+      <max-file-size>10000000</max-file-size>
+      <max-request-size>418018841</max-request-size>
+      <file-size-threshold>1048576</file-size-threshold>
+    </multipart-config>
+  </servlet>
+  <servlet>
+    <servlet-name>getProfilePicture</servlet-name>
+    <servlet-class>servlets.GetProfilePicture</servlet-class>
+  </servlet>
 
 
   <servlet-mapping>
@@ -85,11 +100,19 @@
     <url-pattern>/editLabels</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>getLabels</servlet-name>
-  	<url-pattern>/getLabels</url-pattern>
+    <servlet-name>getLabels</servlet-name>
+    <url-pattern>/getLabels</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-  	<servlet-name>deleteLabel</servlet-name>
-  	<url-pattern>/deleteLabel</url-pattern>
+    <servlet-name>deleteLabel</servlet-name>
+    <url-pattern>/deleteLabel</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>saveProfilePicture</servlet-name>
+    <url-pattern>/saveProfilePicture</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>getProfilePicture</servlet-name>
+    <url-pattern>/getProfilePicture</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -1,5 +1,9 @@
 package bussiness;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -8,6 +12,7 @@ import Exceptions.UnAuthorizedActionException;
 import dao.ContactDao;
 import entities.Contact;
 import entities.Label;
+import entities.ProfilePicture;
 import entities.User;
 
 public class ContactBussiness {
@@ -76,9 +81,42 @@ public String getContactsString(User user) throws SQLException, ClassNotFoundExc
             throw new DoesNotExistException("Contact with id " + contact_id + " does not exist");
         }
         if ( !(contactFromDatabase.getUser_id() == user.getId())) {
-            throw new UnAuthorizedActionException("UnAuthorized attempt to delete contact");
+            throw new UnAuthorizedActionException("UnAuthorized attempt to access contact");
         }
         return contactFromDatabase;
 
+    }
+
+    public boolean saveProfilePicture(User user, ProfilePicture profilePicture) throws SQLException, DoesNotExistException, UnAuthorizedActionException, IOException {
+        autherize(user, profilePicture.getContact_id());
+        String path = "D:\\Programming\\Java\\Servlet And JSP\\contacts\\Images\\" + profilePicture.getContact_id() + "." + profilePicture.getType();
+                
+        try(FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(profilePicture.getInputStream().readAllBytes());
+        }
+        File file = new File(path);
+        try {
+            if (!contactDao.saveProfilePicture(profilePicture)) {
+                file.delete();
+                return false;
+            }
+        } catch (SQLException e) {
+            file.delete();
+            return false;
+        }
+        return true;
+    }
+
+    public ProfilePicture getProfilePicture(User user, long contact_id) throws SQLException, DoesNotExistException, UnAuthorizedActionException, IOException {
+        autherize(user, contact_id);
+        ProfilePicture pp = contactDao.getProfilePicture(contact_id);
+        File file = new File("D:\\Programming\\Java\\Servlet And JSP\\contacts\\Images\\" + pp.getContact_id() + "." + pp.getType());
+        
+        if (file.exists()) {
+            FileInputStream fis = new FileInputStream(file);
+            pp.setInputStream(fis);
+            return pp;
+        }
+        return null;
     }
 }
