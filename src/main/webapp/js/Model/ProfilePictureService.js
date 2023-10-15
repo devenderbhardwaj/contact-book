@@ -1,5 +1,7 @@
+import { LRUCache } from "../utilities/Cache.js";
+
 class ProfilePictureServiceClass {
-    map = new Map();
+    cache = new LRUCache(20);
 
     /**
      * @param {number} contact_id 
@@ -22,7 +24,7 @@ class ProfilePictureServiceClass {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => {
-                    this.map.set(contact_id, reader.result);
+                    this.cache.set(contact_id, reader.result);
                     successCallback?.(reader.result);
                 }
             } else {
@@ -32,8 +34,8 @@ class ProfilePictureServiceClass {
     }
 
     getProfile(contact_id, { successCallBack, failureCallBack }) {
-        if (this.map.has(contact_id)) {
-            successCallBack?.(this.map.get(contact_id));
+        if (this.cache.has(contact_id)) {
+            successCallBack?.(this.cache.get(contact_id));
             return ;
         }
         const request = new XMLHttpRequest();
@@ -48,7 +50,7 @@ class ProfilePictureServiceClass {
                 const reader = new FileReader();
                 reader.readAsDataURL(response);
                 reader.onload = () => {
-                    this.map.set(contact_id, reader.result);
+                    this.cache.set(contact_id, reader.result);
                     successCallBack?.(reader.result);
                 }
             } else {
