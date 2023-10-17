@@ -19,10 +19,12 @@ class SideBar {
         const createContactBtn = this.#getCreateContactButton();
         const labelList = document.createElement("ul");
         const labelListHeader = this.#getLabelListHeader();
+        const logoutBtn = this.#getLogoutBtn();
 
         padder.appendChild(createContactBtn);
         padder.appendChild(labelList);
         padder.appendChild(labelListHeader);
+        padder.appendChild(logoutBtn);
 
         this.#element.appendChild(padder);
         this.#element.appendChild(this.#getCloseBtn());
@@ -42,10 +44,14 @@ class SideBar {
     }
     //Event Handlers : Provided by outside
     #onCreateContact;
+    #onLogOut;
     
     //Event Handlers binders
     bindOnContactCreate(callBack) {
         this.#onCreateContact = callBack;
+    }
+    bindOnLogOut(callBack) {
+        this.#onLogOut = callBack;
     }
     
     //Event Handlers : handles it self
@@ -129,6 +135,16 @@ class SideBar {
         return item;
     }
 
+    #getLogoutBtn() {
+        const btn = document.createElement("button");
+        btn.textContent = "Logout";
+        btn.type = "button";
+        btn.className = "logout-btn";
+        btn.addEventListener("click", () => {
+            this.#onLogOut();
+        })
+        return btn;
+    }
     #close = () => {
         document.body.classList.remove("fixed-sidebar-show");
     }
