@@ -101,7 +101,7 @@ public class EditContact extends HttpServlet {
 
         try {
             rd.data = cb.editContact(user, contact).toJson();
-        } catch (SQLException e) {
+        } catch (SQLException|ClassNotFoundException e) {
             resp.setStatus(500);
             rd.success = false;
             e.printStackTrace();

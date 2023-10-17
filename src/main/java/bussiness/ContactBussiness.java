@@ -56,9 +56,11 @@ public String getContactsString(User user) throws SQLException, ClassNotFoundExc
         return contactDao.deleteContact(contact_id);
     }
 
-    public Contact editContact(User user, Contact contact) throws SQLException, DoesNotExistException, UnAuthorizedActionException{
+    public Contact editContact(User user, Contact contact) throws SQLException, DoesNotExistException, UnAuthorizedActionException, ClassNotFoundException{
         autherize(user, contact.getId());
-        return contactDao.editContact(contact);
+        Contact toReturn = contactDao.editContact(contact);
+        toReturn.setLabels(getLabels(toReturn.getId()));
+        return toReturn;
     }
 
     public String editLabels(User user, long contact_id, ArrayList<Long> ids) throws SQLException, DoesNotExistException, UnAuthorizedActionException, ClassNotFoundException {
