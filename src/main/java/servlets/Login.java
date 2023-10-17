@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import Exceptions.DoesNotExistException;
@@ -82,7 +83,7 @@ public class Login extends HttpServlet {
         } catch (DoesNotExistException e) {
             rd.accountDoesNotExist = true;
             return;
-        } catch (SQLException e) {
+        } catch (SQLException|NoSuchAlgorithmException e) {
             resp.setStatus(500);
             rd.success = false;
             e.printStackTrace();

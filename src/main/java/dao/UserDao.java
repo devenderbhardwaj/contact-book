@@ -16,13 +16,14 @@ public class UserDao {
     }
 
     public boolean addUser(User user) throws SQLException{
-        String query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        String query = "INSERT INTO users (name, email, hash_password, salt) VALUES (?, ?, ?, ?)";
 
         int rowEffected = 0;
         try (PreparedStatement preparedStatement = con.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getName());
             preparedStatement.setString(2, user.getEmail());
-            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setBytes(3, user.getHashPassword());
+            preparedStatement.setBytes(4, user.getSalt());
             rowEffected = preparedStatement.executeUpdate();
         }
         return rowEffected > 0;
@@ -41,7 +42,8 @@ public class UserDao {
                 user = new User();
                 user.setId(rSet.getLong("user_id"));
                 user.setName(rSet.getString("name"));
-                user.setPassword(rSet.getString("password"));
+                user.setHashPassword(rSet.getBytes("hash_password"));
+                user.setSalt(rSet.getBytes("salt"));
                 user.setEmail(rSet.getString("email"));
             }
         }

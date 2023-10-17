@@ -1,18 +1,26 @@
 package entities;
 
+import java.util.Arrays;
+
 public class User {
     private long id;
     private String name;
     private String email;
-    private String password;
+    private byte[] salt;
+    private byte[] hashPassword;
     
-    public User(long id, String name, String email, String password) {
+    public User(long id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
     }
     public User() {
+    }
+    public byte[] getSalt() {
+        return salt;
+    }
+    public void setSalt(byte[] salt) {
+        this.salt = salt;
     }
     public long getId() {
         return id;
@@ -32,14 +40,14 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public String getPassword() {
-        return password;
+    public byte[] getHashPassword() {
+        return hashPassword;
     }
-    public void setPassword(String password) {
-        this.password = password;
+    public void setHashPassword(byte[] password) {
+        this.hashPassword = password;
     }
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + "]";
+        return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + Arrays.toString(this.hashPassword) + "]";
     }
 }

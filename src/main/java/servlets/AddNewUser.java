@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -90,7 +91,7 @@ public class AddNewUser extends HttpServlet {
         } catch (SQLIntegrityConstraintViolationException e) {
             rd.alreadyExist = true;
             rd.success = false;
-        } catch (ClassNotFoundException|SQLException e) {
+        } catch (ClassNotFoundException|SQLException|NoSuchAlgorithmException e) {
             rd.success = false;
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
