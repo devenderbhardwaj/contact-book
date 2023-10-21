@@ -12,7 +12,7 @@ import dao.UserDao;
 import entities.User;
 
 public class UserBussiness {
-    private UserDao userDao;
+    private final UserDao userDao;
 
     public UserBussiness() throws ClassNotFoundException, SQLException {
         userDao = new UserDao();

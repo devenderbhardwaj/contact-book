@@ -11,7 +11,7 @@ import entities.Label;
 import entities.User;
 
 public class LabelDao {
-    private Connection con;
+    private final Connection con;
 
     public LabelDao() throws ClassNotFoundException, SQLException  {
         con = ConnectionProvider.getConnection();

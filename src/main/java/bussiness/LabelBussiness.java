@@ -10,7 +10,7 @@ import entities.Label;
 import entities.User;
 
 public class LabelBussiness {
-    LabelDao labelDao;
+    private final LabelDao labelDao;
 
     public LabelBussiness() throws ClassNotFoundException, SQLException{
         labelDao = new LabelDao();

@@ -17,7 +17,7 @@ import entities.User;
 
 public class ContactBussiness {
 
-    ContactDao contactDao;
+    private final ContactDao contactDao;
 
     public ContactBussiness() throws ClassNotFoundException, SQLException {
         contactDao = new ContactDao();

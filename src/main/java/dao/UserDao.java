@@ -9,7 +9,7 @@ import java.sql.Statement;
 import entities.User;
 
 public class UserDao {
-    private Connection con;
+    private final Connection con;
 
     public UserDao() throws ClassNotFoundException, SQLException {
         con = ConnectionProvider.getConnection();

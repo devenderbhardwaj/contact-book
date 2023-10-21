@@ -13,7 +13,7 @@ import entities.ProfilePicture;
 import entities.User;
 
 public class ContactDao {
-    private Connection con;
+    private final Connection con;
 
     public ContactDao() throws ClassNotFoundException, SQLException {
         con = ConnectionProvider.getConnection();
