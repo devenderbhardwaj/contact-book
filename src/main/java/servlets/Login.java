@@ -10,6 +10,7 @@ import Exceptions.WrongPassword;
 import bussiness.UserBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,13 +39,24 @@ public class Login extends HttpServlet {
      * 
      */
     private static final long serialVersionUID = 1L;
+    
+    private UserBussiness userBussiness;
+
+    public void init() throws UnavailableException {
+        try {
+            userBussiness = new UserBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Servlet cannot  be initialized");
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         ResponseData rd = new ResponseData();
         process(rd, req, resp);
-        
+
         resp.setContentType("text/json");
         try (PrintWriter writer = resp.getWriter()) {
             writer.println(rd.toJson());
@@ -54,15 +66,7 @@ public class Login extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
-        UserBussiness userBussiness;
-        try {
-            userBussiness = new UserBussiness();
-        } catch (ClassNotFoundException | SQLException e) {
-            resp.setStatus(500);
-            rd.success = false;
-            e.printStackTrace();
-            return;
-        }
+        
 
         String email = req.getParameter("email");
         String password = req.getParameter("password");

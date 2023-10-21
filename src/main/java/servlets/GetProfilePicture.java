@@ -9,6 +9,7 @@ import bussiness.ContactBussiness;
 import entities.ProfilePicture;
 import entities.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,17 @@ public class GetProfilePicture extends HttpServlet{
 	 */
 	private static final long serialVersionUID = 6298252469210205784L;
 
+    private ContactBussiness contactBussiness;
+
+    @Override
+    public void init() throws UnavailableException {
+        try {
+            contactBussiness = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Servlet Cannot be instantiated");
+        }
+    }
 	@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);
@@ -31,14 +43,6 @@ public class GetProfilePicture extends HttpServlet{
     }
 
     private void process(HttpServletRequest req, HttpServletResponse  resp) {
-        ContactBussiness cb ;
-        try {
-            cb = new ContactBussiness();
-        } catch (ClassNotFoundException | SQLException e) {
-            resp.setStatus(500);
-            e.printStackTrace();
-            return ;
-        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(401);
@@ -53,7 +57,7 @@ public class GetProfilePicture extends HttpServlet{
             return ;
         }
         try {
-            ProfilePicture picture = cb.getProfilePicture(user, contact_id);
+            ProfilePicture picture = contactBussiness.getProfilePicture(user, contact_id);
             resp.setContentType("image/"+picture.getType());
             var out = resp.getOutputStream();
             out.write(picture.getInputStream().readAllBytes());

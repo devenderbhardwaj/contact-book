@@ -8,6 +8,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 import bussiness.UserBussiness;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,6 +60,17 @@ public class AddNewUser extends HttpServlet {
      */
     private static final long serialVersionUID = 1L;
 
+    private UserBussiness userBussiness;
+
+    @Override
+    public void init() throws UnavailableException {
+        try {
+            userBussiness = new UserBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Servlet Cannot be instantiated");
+        }
+    }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -82,16 +94,15 @@ public class AddNewUser extends HttpServlet {
         if (!Validate.validate(rd, name, email, password)) {
             return;
         }
-        ;
+        
         try {
-            UserBussiness userBussiness = new UserBussiness();
             boolean added = userBussiness.addUser(name, email, password);
             rd.alreadyExist = !added;
             rd.success = added;
         } catch (SQLIntegrityConstraintViolationException e) {
             rd.alreadyExist = true;
             rd.success = false;
-        } catch (ClassNotFoundException|SQLException|NoSuchAlgorithmException e) {
+        } catch (SQLException|NoSuchAlgorithmException e) {
             rd.success = false;
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();

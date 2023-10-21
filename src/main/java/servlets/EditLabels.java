@@ -10,6 +10,7 @@ import Exceptions.UnAuthorizedActionException;
 import bussiness.ContactBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,6 +45,18 @@ public class EditLabels extends HttpServlet {
         }
     }
 
+    private ContactBussiness contactBussiness;
+
+    @Override
+    public void init() throws UnavailableException {
+        try {
+            contactBussiness = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Servlet Cannot be instantiated");
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ResponseData rd = new ResponseData();
@@ -56,14 +69,6 @@ public class EditLabels extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
-        ContactBussiness cb;
-        try {
-            cb = new ContactBussiness();
-        } catch (ClassNotFoundException | SQLException e) {
-            resp.setStatus(500);
-            e.printStackTrace();
-            return ;
-        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -97,18 +102,18 @@ public class EditLabels extends HttpServlet {
         rd.valid = true;
 
         try {
-            rd.data = cb.editLabels(user, contact_id, label_ids);
+            rd.data = contactBussiness.editLabels(user, contact_id, label_ids);
             rd.success = true;
-        } catch (ClassNotFoundException|SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             resp.setStatus(500);
             e.printStackTrace();
-            return ;
-        } catch (DoesNotExistException |UnAuthorizedActionException e) {
+            return;
+        } catch (DoesNotExistException | UnAuthorizedActionException e) {
             resp.setStatus(401);
             rd.autherize = false;
             e.printStackTrace();
-            return ;
-        } 
+            return;
+        }
 
     }
 

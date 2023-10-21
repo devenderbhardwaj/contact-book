@@ -9,6 +9,7 @@ import Exceptions.UnAuthorizedActionException;
 import bussiness.ContactBussiness;
 import entities.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.UnavailableException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +42,18 @@ public class DeleteContact extends HttpServlet {
      */
     private static final long serialVersionUID = -5774239806694409089L;
 
+    private ContactBussiness contactBussiness;
+
+    @Override
+    public void init() throws UnavailableException {
+        try {
+            contactBussiness = new ContactBussiness();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            throw new UnavailableException("Servlet Cannot be instantiated");
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ResponseData rd = new ResponseData();
@@ -55,14 +68,6 @@ public class DeleteContact extends HttpServlet {
     }
 
     private void process(ResponseData rd, HttpServletRequest req, HttpServletResponse resp) {
-        ContactBussiness contactBussiness;
-        try {
-            contactBussiness = new ContactBussiness();
-        } catch (ClassNotFoundException | SQLException e) {
-            resp.setStatus(500);
-            e.printStackTrace();
-            return ;
-        }
         User user = (User) req.getSession().getAttribute("user");
         if (user == null) {
             resp.setStatus(401);
