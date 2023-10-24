@@ -61,6 +61,10 @@
     <servlet-name>getProfilePicture</servlet-name>
     <servlet-class>servlets.GetProfilePicture</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>home</servlet-name>
+    <jsp-file>/index.jsp</jsp-file>
+  </servlet>
 
 
   <servlet-mapping>
@@ -115,4 +119,10 @@
     <servlet-name>getProfilePicture</servlet-name>
     <url-pattern>/getProfilePicture</url-pattern>
   </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>home</servlet-name>
+    <url-pattern>/home/*</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

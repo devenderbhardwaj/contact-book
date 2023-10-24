@@ -1,8 +1,10 @@
 import { Contact } from "../Model/Contact.js";
 import { ContactService } from "../Model/ContactService.js";
 import { ProfilePictureService } from "../Model/ProfilePictureService.js";
+import { Router } from "../utilities/Router.js";
 import getAllLabelsPopUp from "./AllLabelsPopUp.js";
 import { ProfileDialog } from "./ProfileDailog.js";
+import { DeleteDialog } from "./deleteDialog.js";
 
 export class ContactView {
     #contact;
@@ -10,10 +12,29 @@ export class ContactView {
     #editMode;
 
     // Action Listener
-    #onDelete;
-    #onEditSave;
-    #onBack;
-    #onReload;
+    #onDelete = () => {
+        const successCallBack = history.back;
+        const failureCallback = () => alert("Delete operation failed");
+        const onYes = () => ContactService.deleteContact(this.#contact.id, { successCallBack, failureCallback });
+        const deleteDialog = new DeleteDialog(onYes);
+        deleteDialog.show();
+    };
+    #onEditSave = (formdata) => {
+        const successCallBack = (contact_id) => {
+            history.replaceState(null, null, `/contacts/home/contact?id=${contact_id}`);
+            Router.route();
+        };
+        const errorCallBack = () => alert("Failed");
+        ContactService.editContact(formdata, { successCallBack, errorCallBack })
+    };
+    #onReload = (editMode) => {
+        if (editMode) {
+            history.replaceState(null, null, `/contacts/home/contact?id=${this.#contact.id}&edit=on`)
+        } else {
+            history.replaceState(null, null, `/contacts/home/contact?id=${this.#contact.id}`)
+        }
+        Router.route();
+    };
 
     /**
      * 
@@ -25,18 +46,6 @@ export class ContactView {
         this.#editMode = editMode;
     }
 
-    bindDelete(callBack) {
-        this.#onDelete = callBack;
-    }
-    bindEditSave(callBack) {
-        this.#onEditSave = callBack;
-    }
-    bindGoBack(callBack) {
-        this.#onBack = callBack;
-    }
-    bindOnReload(callBack) {
-        this.#onReload = callBack
-    }
     getViewElement() {
         return this.#element;
     }
@@ -51,11 +60,6 @@ export class ContactView {
         } else {
             element.append(this.#getContactInfoCard());
         }
-        const closeBtn = document.createElement("button");
-        element.append(closeBtn);
-        closeBtn.outerHTML = "<button type='button' class='close-btn'>Close</button>";
-        element.querySelector(".close-btn").addEventListener("click", () => this.#onBack());
-
         return element;
     }
 

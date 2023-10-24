@@ -7,7 +7,7 @@ export class ContactServiceClass {
      * @type {Contact[]}
      */
     contacts = [];
-    #onContactsLoad;
+    #onContactsLoad = new Map();
 
     constructor() {
         this.#loadContacts();
@@ -15,15 +15,23 @@ export class ContactServiceClass {
 
     /**
      * Bind callback function which will be called everytime there is change to array of all Contacts
+     * @param {string} callbackName - Name of this callback
      * @param {Function} callBack - Function to call when there is some change in contacts
      */
-    bindOnContactsLoad(callBack) {
-        this.#onContactsLoad = callBack;
+    bindOnContactsLoad(callbackName, callBack) {
+        this.#onContactsLoad.set(callbackName, callBack);
+    }
+    /**
+     * 
+     * @param {string} callbackName - Callback to be removed
+     */
+    unBindOnContactLoad(callbackName) {
+        this.#onContactsLoad.delete(callbackName);
     }
 
     #loadContacts() {
         const request = new XMLHttpRequest();
-        request.open("POST", "getContacts");
+        request.open("POST", "/contacts/getContacts");
         request.send();
         request.onload = () => {
             if (request.status == 200) {
@@ -53,7 +61,8 @@ export class ContactServiceClass {
     #refresh(arr) {
         arr = arr ?? this.contacts;
         arr.sort((a, b) => a.name.localeCompare(b.name));
-        this.#onContactsLoad?.(arr);
+        Array.from(this.#onContactsLoad.values())
+            .forEach(callback => callback(arr));
     }
 
     /**
@@ -79,7 +88,7 @@ export class ContactServiceClass {
             }
             this.#refresh();
         };
-        req.open("POST", "saveContact");
+        req.open("POST", "/contacts/saveContact");
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         const encodedFormData = new URLSearchParams(formdata).toString();
         req.send(encodedFormData);
@@ -91,7 +100,7 @@ export class ContactServiceClass {
      */
     editContact(formdata, { successCallBack, errorCallBack }) {
         const req = new XMLHttpRequest();
-        req.open("POST", "editContact");
+        req.open("POST", "/contacts/editContact");
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         req.onload = () => {
@@ -101,7 +110,7 @@ export class ContactServiceClass {
                     const contact = new Contact(response.data);
                     const index = this.contacts.findIndex(item => item.id == contact.id);
                     this.contacts.splice(index, 1, contact);
-                    successCallBack?.(contact);
+                    successCallBack?.(contact.id);
                 } else {
                     errorCallBack?.();
                 }
@@ -122,7 +131,7 @@ export class ContactServiceClass {
      */
     deleteContact(id, { successCallBack, failureCallback }) {
         const request = new XMLHttpRequest();
-        request.open("POST", "delete");
+        request.open("POST", "/contacts/delete");
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.onload = () => {
             if (request.status == 200) {
@@ -192,12 +201,21 @@ export class ContactServiceClass {
                 alert(request.statusText);
             }
         }
-        request.open("POST", "editLabels")
+        request.open("POST", "/contacts/editLabels")
         request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         const params = new URLSearchParams();
         params.append("contact_id", contact.id);
         checked.forEach(id => params.append("id", id));
         request.send(params);
+    }
+
+    /**
+     * 
+     * @param {number} contact_id 
+     * @returns {Contact}
+     */
+    getContactById(contact_id) {
+        return this.contacts.find(c => c.id == contact_id);
     }
 }
 

@@ -1,12 +1,12 @@
-import { ContactServiceClass } from "../Model/ContactService.js";
+import { ContactService } from "../Model/ContactService.js";
+import { Router } from "../utilities/Router.js";
 
 /**
  * @param {Function} backAction
- * @param {ContactServiceClass} ContactService 
  * @returns div element containing form to create a new contact
  */
-export function getCreateContactForm(backAction, ContactService) {
-	const element = document.createElement("div");
+export function getCreateContactForm() {
+    const element = document.createElement("div");
     element.className = "create-contact";
 
     element.innerHTML =
@@ -30,9 +30,7 @@ export function getCreateContactForm(backAction, ContactService) {
                 <textarea name="address" id="address-inp-c" cols="30" rows="5"></textarea>
             </p>
             <p><button type="submit">Save</button></p>
-        </form>
-
-        <button type="button" class="close-btn">Close</button>`;
+        </form>`;
 
     const createContactForm = element.querySelector("form");
     createContactForm.addEventListener("submit", (e) => {
@@ -40,14 +38,13 @@ export function getCreateContactForm(backAction, ContactService) {
 
         const successCallBack = () => {
             alert("Saved");
-            backAction();
+            history.back();
         }
 
         const errorCallBack = () => alert("Contact not Saved");
         const formdata = new FormData(createContactForm);
 
-        ContactService.addContact(formdata, {successCallBack, errorCallBack});
+        ContactService.addContact(formdata, { successCallBack, errorCallBack });
     });
-    element.querySelector(".close-btn").addEventListener("click", () => backAction());
     return element;
 }

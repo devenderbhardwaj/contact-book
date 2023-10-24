@@ -47,7 +47,7 @@ public class Login extends HttpServlet {
             userBussiness = new UserBussiness();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            throw new UnavailableException("Servlet cannot  be initialized");
+            throw new UnavailableException("Servlet cannot be initialized");
         }
     }
 
@@ -80,7 +80,7 @@ public class Login extends HttpServlet {
             User user = userBussiness.authenticateUser(email, password);
             req.getSession().setAttribute("user", user);
             rd.success = true;
-            rd.redirectUrl = "index.jsp";
+            rd.redirectUrl = "home";
         } catch (WrongPassword e) {
             rd.wrongPassword = true;
             return;

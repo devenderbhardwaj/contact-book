@@ -16,7 +16,7 @@ class ProfilePictureServiceClass {
         formdata.append("contact_id", contact_id);
         formdata.append("image", file);
         const request = new XMLHttpRequest();
-        request.open("POST", "saveProfilePicture");
+        request.open("POST", "/contacts/saveProfilePicture");
         request.responseType = "json";
         request.send(formdata);
         request.onload = () => {
@@ -41,7 +41,7 @@ class ProfilePictureServiceClass {
         const request = new XMLHttpRequest();
         const searchParams = new URLSearchParams();
         searchParams.append("contact_id", contact_id);
-        request.open("POST", `getProfilePicture?contact_id=${contact_id}`);
+        request.open("POST", `/contacts/getProfilePicture?contact_id=${contact_id}`);
         request.responseType = "blob";
         request.send();
         request.onload = () => {

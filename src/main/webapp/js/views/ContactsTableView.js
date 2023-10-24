@@ -1,12 +1,13 @@
 import { Contact } from "../Model/Contact.js";
 import { ContactService } from "../Model/ContactService.js";
+import { Router } from "../utilities/Router.js";
 import { DeleteDialog } from "./deleteDialog.js";
 
 export class ContactsTableView {
     #element;
     #tablebody;
     #documentFragment = document.createDocumentFragment();
-    
+
     constructor() {
         this.#element = document.createElement("div");
         this.#element.className = "all-contacts-area";
@@ -14,33 +15,10 @@ export class ContactsTableView {
         this.#element.appendChild(this.#getSearchBox());
         this.#element.appendChild(this.#getTableParentElement());
         this.#tablebody = this.#element.querySelector(".table-body");
-    
-        ContactService.bindOnContactsLoad(contacts => this.update(contacts));
+
+        ContactService.bindOnContactsLoad("displayAllContact", contacts => this.update(contacts));
         this.update(ContactService.contacts);
     }
-
-    // Action Listener - provided by outside
-    #onEdit ;
-    #onView;
-
-    // Action Listener - binders
-
-    /**
-     * 
-     * @param {Function} callBack 
-     */
-    bindOnView(callBack) {
-        this.#onView = callBack;
-    }
-
-    /**
-     * 
-     * @param {Function} callBack 
-     */
-    bindOnEdit(callBack) {
-        this.#onEdit = callBack;
-    }
-    
 
     // Action Listener - defined internally
 
@@ -114,8 +92,14 @@ export class ContactsTableView {
                 </div>
             `
         );
-        rowElement.querySelector(".name").addEventListener("click", () => this.#onView(contact, false));
-        rowElement.querySelector("button.edit").addEventListener("click", () => this.#onView(contact, true));
+        rowElement.querySelector(".name").addEventListener("click", () => {
+            history.pushState(null, null, `/contacts/home/contact?id=${contact.id}`);
+            Router.route();
+        });
+        rowElement.querySelector("button.edit").addEventListener("click", () => {
+            history.pushState(null, null, `/contacts/home/contact?id=${contact.id}&edit=on`);
+            Router.route();
+        });
         rowElement.querySelector("button.delete").addEventListener("click", () => this.#onDelete(contact));
         
         return rowElement;

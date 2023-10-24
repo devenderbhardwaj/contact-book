@@ -1,6 +1,7 @@
 import { ContactService } from "../Model/ContactService.js";
 import Label from "../Model/Label.js";
 import LabelService from "../Model/LabelsService.js";
+import { Router } from "../utilities/Router.js";
 import { CreateLabelDialog } from "./CreateLabelDialog.js";
 
 class SideBar {
@@ -43,22 +44,17 @@ class SideBar {
         LabelService.refresh();
     }
     //Event Handlers : Provided by outside
-    #onCreateContact;
     #onLogOut;
-    
-    //Event Handlers binders
-    bindOnContactCreate(callBack) {
-        this.#onCreateContact = callBack;
-    }
+
     bindOnLogOut(callBack) {
         this.#onLogOut = callBack;
     }
-    
+
     //Event Handlers : handles it self
     #onCreatelabel = (text) => {
         LabelService.addLabel(text);
     }
-    
+
     getViewElement() {
         return this.#element;
     }
@@ -95,7 +91,8 @@ class SideBar {
         button.type = "button";
         button.textContent = "Create Contact";
         button.addEventListener("click", () => {
-            this.#onCreateContact();
+            history.pushState(null, "Create Contact", "/contacts/home/createContact");
+            Router.route();
             this.#close();
         });
         return button;
@@ -113,8 +110,8 @@ class SideBar {
 
         return button;
     }
+    
     /**
-     * 
      * @param {Label} label 
      */
     #getListItem(label) {

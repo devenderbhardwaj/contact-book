@@ -25,7 +25,7 @@ class LabelServiceClass {
                 }
             }
         }
-        request.open("GET", "getLabels");
+        request.open("GET", "/contacts/getLabels");
         request.send();
     }
     bindOnLoad(callBack) {
@@ -38,7 +38,7 @@ class LabelServiceClass {
 
     addLabel(text, { successCallback, failureCallback } = {}) {
         const request = new XMLHttpRequest();
-        request.open("POST", "addLabel");
+        request.open("POST", "/contacts/addLabel");
         request.onload = () => {
             if (request.status == 200) {
                 const response = JSON.parse(request.responseText);
@@ -97,7 +97,7 @@ class LabelServiceClass {
                     failureCallback?.();
                 }
             }
-            request.open("POST", 'deleteLabel');
+            request.open("POST", '/contacts/deleteLabel');
             request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
             const params = new URLSearchParams();
             params.append("label_id", label_id);
