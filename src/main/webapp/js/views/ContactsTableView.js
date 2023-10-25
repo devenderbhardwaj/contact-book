@@ -16,7 +16,7 @@ export class ContactsTableView {
         this.#element.appendChild(this.#getTableParentElement());
         this.#tablebody = this.#element.querySelector(".table-body");
 
-        ContactService.bindOnContactsLoad("displayAllContact", contacts => this.update(contacts));
+        ContactService.bindOnContactsLoad("displayContacts", contacts => this.update(contacts));
         this.update(ContactService.contacts);
     }
 
@@ -112,7 +112,7 @@ export class ContactsTableView {
             name: 'filter-search',
             className: "filter",
             placeholder: "Search",
-            oninput: () => this.update(ContactService.filterSearch(searchField.value))
+            oninput: () => ContactService.setFilterTerm(searchField.value)
         })
         
         const menuBtn = document.createElement("button");

@@ -37,7 +37,7 @@ class SideBar {
             } else {
                 this.#checked.delete(target_id);
             }
-            ContactService.filterLabel(this.#checked);
+            ContactService.setFilterSet(this.#checked);
         })
 
         LabelService.bindOnLoad((labels) => this.#update(labels));

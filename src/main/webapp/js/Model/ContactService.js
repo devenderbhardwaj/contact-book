@@ -7,6 +7,8 @@ export class ContactServiceClass {
      * @type {Contact[]}
      */
     contacts = [];
+    #filterTerm;
+    #filterSet;
     #onContactsLoad = new Map();
 
     constructor() {
@@ -39,30 +41,36 @@ export class ContactServiceClass {
                 if (response.success) {
                     this.contacts = response.data.map(item => new Contact(item));
                     console.log(this.contacts);
-                    this.#refresh();
+                    this.#loaded();
                 }
             } else {
                 alert("Contact couldn't be fetched");
             }
         }
     }
-
+    #loaded () {
+        const arr = this.contacts;
+        arr.sort((a, b) => a.name.localeCompare(b.name));
+        Array.from(this.#onContactsLoad.values())
+            .forEach(callback => callback(arr));
+    }
     refreshLabels() {
         this.contacts.forEach(
             contact =>
                 contact.labels = LabelService.getLabels(contact.labels.map(label => label.id))
         );
-        this.#refresh();
+        this.#display();
     }
     /**
      * Display contacts which are passed as array of Contacts if argument is not passed display all contacts
      * @param {[Contact]} arr - array of Contact to display
      */
-    #refresh(arr) {
-        arr = arr ?? this.contacts;
+    #display() {
+        let arr = this.contacts;
         arr.sort((a, b) => a.name.localeCompare(b.name));
-        Array.from(this.#onContactsLoad.values())
-            .forEach(callback => callback(arr));
+        arr = arr.filter(item => item.includesTerm(this.#filterTerm));
+        arr = this.#filterByLabel(arr, this.#filterSet);
+        this.#onContactsLoad.get("displayContacts")?.(arr);
     }
 
     /**
@@ -86,7 +94,7 @@ export class ContactServiceClass {
             } else {
                 errorCallBack();
             }
-            this.#refresh();
+            this.#loaded();
         };
         req.open("POST", "/contacts/saveContact");
         req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -117,7 +125,7 @@ export class ContactServiceClass {
             } else {
                 errorCallBack?.();
             }
-            this.#refresh();
+            this.#loaded();
 
         };
         const encodedFormData = new URLSearchParams(formdata).toString();
@@ -138,7 +146,7 @@ export class ContactServiceClass {
                 const response = JSON.parse(request.responseText);
                 if (response.success) {
                     this.contacts = this.contacts.filter(contact => contact.id != id);
-                    this.#refresh();
+                    this.#loaded();
                     successCallBack?.();
                 } else {
                     failureCallback?.();
@@ -153,18 +161,26 @@ export class ContactServiceClass {
     /**
      * For filter contacts based on text
      * @param {string} term - term to search
-     * @returns {Contact[]} - Array of all Contacts which includes the term
+
      */
-    filterSearch(term) {
-        return this.contacts.filter(item => item.includesTerm(term));
+    setFilterTerm(term) {
+        this.#filterTerm = term;
+        this.#display();
+    }
+
+    setFilterSet(set) {
+        this.#filterSet  = set;
+        this.#display();
     }
 
     /**
      * Display contacts which conform to applied contact label filters
-     * @param {number[]} ids - array of labels-ids 
+     * @param {Contact[]} arr - arr of contacts from which have to search
+     * @param {number[]} ids - array of labels-ids
+     * @returns {Set<Contact>}
      */
-    filterLabel(ids) {
-        const set = new Set(this.contacts);
+    #filterByLabel(arr, ids) {
+        const set = new Set(arr);
         ids.forEach(id => {
             this.contacts.forEach(contact => {
                 const result = contact.hasLabel(id);
@@ -172,7 +188,7 @@ export class ContactServiceClass {
             });
         })
 
-        this.#refresh(Array.from(set));
+        return set
     }
 
     /**
@@ -190,7 +206,7 @@ export class ContactServiceClass {
                     const index = this.contacts.findIndex(c => c.id == contact.id);
                     this.contacts[index].labels = resposne.data.labels;
                     successCallBack?.(this.contacts[index]);
-                    this.#refresh();
+                    this.#loaded();
                 }
                 else {
                     failureCallback?.();
