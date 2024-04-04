@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group">
                     <p>New user ?
-                        <a href="contacts/signup.jsp" class="sign-span">Create a Account</a>
+                        <a href="/contacts/signup.jsp" class="sign-span">Create a Account</a>
                     </p>
                 </div>
             </form>

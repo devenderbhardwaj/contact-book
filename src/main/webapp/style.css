@@ -35,7 +35,9 @@ body.fixed-sidebar-show {
     flex: 1;
 	padding: 1vw;
 }
-
+.error-message {
+	color: red;
+}
 @media screen and (max-width: 1000px) {
 	:root {
 		font-size: 17px;

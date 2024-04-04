@@ -17,6 +17,7 @@
                 <h1>Sign up</h1>
 
                 <p>Please fill in this form to create an account.</p>
+                <div class="error-message"></div>
                 <hr>
 
                 <div class="form-group">
@@ -54,8 +55,10 @@
 </body>
 <script>
     "use strict"
-
+    const errorElement = document.querySelector(".error-message");
     const form = document.querySelector(".signup-form");
+    const confirmPassword = form['confirm-password'];
+    confirmPassword.addEventListener("input", () => errorElement.textContent = "");
     form.addEventListener("submit", (e) => {
         e.preventDefault();
         const data = new FormData(form);
@@ -93,7 +96,7 @@
             request.send(postString);
         }
         else {
-            form.querySelector("#confirm-password").setCustomValidity("Passwords do not match");
+            errorElement.textContent = "Password's don't match"
         }
     })
 </script>
